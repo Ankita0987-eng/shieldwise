@@ -1,0 +1,20 @@
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Node (in case any tooling is added later)
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# Build output (in case a bundler is added later)
+dist/
+build/

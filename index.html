@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldWise — Phishing, Scam & Fraud Detection Awareness Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    { DEFAULT:'#101A2B', 800:'#182337', 700:'#22304A' },
+          paper:  { DEFAULT:'#F6F8FA', 100:'#FFFFFF', 200:'#EDF1F4' },
+          trust:  { DEFAULT:'#0E7C7B', 600:'#0A6362', 100:'#E3F3F2' },
+          signal: { DEFAULT:'#B4472A', 100:'#F7E7E1' },
+          caution:{ DEFAULT:'#B8862E', 100:'#F8EFDB' },
+          line:   { DEFAULT:'#D8DEE4' },
+          gold:   { DEFAULT:'#C99A3F' },
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"','sans-serif'],
+          body: ['Inter','sans-serif'],
+          mono: ['"JetBrains Mono"','monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root{ color-scheme: light; }
+  html{ scroll-behavior:smooth; }
+  body{ background:#F6F8FA; }
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    html{ scroll-behavior:auto; }
+  }
+  @media print {
+    #mainHeader, footer, #toastContainer, #backToTop{ display:none !important; }
+    .no-print{ display:none !important; }
+    body{ background:#fff; }
+  }
+  .view{ display:none; }
+  .view.active{ display:block; }
+  ::selection{ background:#0E7C7B33; }
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid #0E7C7B; outline-offset:2px; border-radius:2px;
+  }
+  .ledger-row{ border-bottom:1px solid #D8DEE4; }
+  .ledger-row:last-child{ border-bottom:none; }
+  .scanline{
+    position:absolute; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, #0E7C7B, transparent);
+    box-shadow:0 0 12px 2px #0E7C7B99;
+  }
+  .flag-hit{ background:#F7E7E1; color:#101A2B; font-weight:600; border-bottom:2px solid #B4472A; border-radius:2px; padding:0 2px; }
+  .tick-in{ animation:tickIn .5s ease forwards; }
+  @keyframes tickIn{ from{ opacity:0; transform:scale(.9);} to{ opacity:1; transform:scale(1);} }
+  .badge-locked{ filter:grayscale(1) opacity(.35); }
+  input[type=range]{ accent-color:#0E7C7B; }
+  .risk-meter{ height:10px; border-radius:6px; background:#EDF1F4; overflow:hidden; }
+  .risk-fill{ height:100%; transition:width .5s ease, background-color .5s ease; }
+  .nav-link{ position:relative; transition:color .2s ease; }
+  .nav-link:hover{ color:#0E7C7B; }
+  .nav-link.active{ color:#0E7C7B; }
+  .nav-link.active::after{ content:''; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:#0E7C7B; }
+  .case-number{ font-family:'JetBrains Mono',monospace; font-size:.7rem; color:#0E7C7B; letter-spacing:.03em; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb{ background:#D8DEE4; border-radius:6px; }
+
+  /* ---- header scroll state ---- */
+  #mainHeader{ transition:box-shadow .3s ease, height .25s ease; }
+  #mainHeader.is-scrolled{ box-shadow:0 1px 0 rgba(16,26,43,.04), 0 12px 24px -18px rgba(16,26,43,.25); }
+
+  /* ---- view transitions ---- */
+  .view{ display:none; }
+  .view.active{ display:block; }
+  .view.active.page-enter{ opacity:0; transform:translateY(8px); }
+  .view.active.page-enter-active{ opacity:1; transform:none; transition:opacity .3s ease, transform .3s ease; }
+
+  /* ---- hover-lift micro-interaction ---- */
+  .lift{ transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+  .lift:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -20px rgba(16,26,43,.35); }
+
+  /* ---- global button/link micro-interaction (applies to every pill/rounded control) ---- */
+  a[class*="rounded-lg"], button[class*="rounded-lg"], a[class*="rounded-full"], button[class*="rounded-full"]{
+    transition:transform .18s ease, background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  a[class*="rounded-lg"]:hover, button[class*="rounded-lg"]:hover,
+  a[class*="rounded-full"]:hover, button[class*="rounded-full"]:hover{
+    transform:translateY(-1px);
+  }
+  a[class*="rounded-lg"]:active, button[class*="rounded-lg"]:active,
+  a[class*="rounded-full"]:active, button[class*="rounded-full"]:active{
+    transform:translateY(0);
+  }
+
+  /* ---- toasts ---- */
+  #toastContainer{ position:fixed; top:1.25rem; right:1.25rem; z-index:100; display:flex; flex-direction:column; gap:.6rem; pointer-events:none; }
+  .toast{
+    pointer-events:auto; display:flex; align-items:flex-start; gap:.6rem; max-width:320px;
+    background:#101A2B; color:#fff; border-radius:.75rem; padding:.75rem .9rem; font-size:.85rem;
+    box-shadow:0 18px 40px -20px rgba(16,26,43,.55);
+    opacity:0; transform:translateX(16px) scale(.98); transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.show{ opacity:1; transform:none; }
+  .toast .toast-icon{ font-size:1.05rem; line-height:1; }
+
+  /* ---- back to top ---- */
+  #backToTop{
+    position:fixed; bottom:1.5rem; right:1.5rem; z-index:60; width:2.75rem; height:2.75rem;
+    border-radius:9999px; background:#101A2B; color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 14px 28px -16px rgba(16,26,43,.5);
+    opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease, background .2s ease;
+  }
+  #backToTop.show{ opacity:1; transform:none; pointer-events:auto; }
+  #backToTop:hover{ background:#0E7C7B; }
+
+  /* ---- skeleton loader ---- */
+  .skeleton{ position:relative; overflow:hidden; background:#EDF1F4; border-radius:.5rem; }
+  .skeleton::after{
+    content:''; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent);
+    animation:shimmer 1.4s infinite;
+  }
+  @keyframes shimmer{ 100%{ transform:translateX(100%); } }
+
+  /* ---- live pulse dot ---- */
+  .pulse-dot{ position:relative; }
+  .pulse-dot::after{
+    content:''; position:absolute; inset:0; border-radius:9999px; background:currentColor;
+    animation:pulseRing 1.8s ease-out infinite;
+  }
+  @keyframes pulseRing{ 0%{ transform:scale(1); opacity:.65; } 100%{ transform:scale(2.6); opacity:0; } }
+
+  /* ---- network canvas ---- */
+  #heroCanvas{ position:absolute; inset:0; width:100%; height:100%; opacity:.5; pointer-events:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    html{ scroll-behavior:auto; }
+    .view{ transition:none; }
+    .lift:hover{ transform:none; }
+    .toast{ transition:none; }
+    #backToTop{ transition:none; }
+    .skeleton::after{ animation:none; }
+    .pulse-dot::after{ animation:none; }
+    a[class*="rounded-lg"]:hover, button[class*="rounded-lg"]:hover,
+    a[class*="rounded-full"]:hover, button[class*="rounded-full"]:hover{ transform:none; }
+    .lift:hover{ transform:none; }
+  }
+</style>
+</head>
+<body class="font-body text-ink antialiased">
+
+<!-- ============ HEADER / NAV ============ -->
+<header id="mainHeader" class="sticky top-0 z-50 bg-paper-100/90 backdrop-blur border-b border-line">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-2 font-display font-semibold text-lg">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#0E7C7B" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.2 12 2.6 2.6 5-5" stroke="#0E7C7B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      ShieldWise
+    </a>
+    <nav id="mainNav" class="hidden lg:flex items-center gap-6 text-sm">
+      <a data-nav="home" href="#home" class="nav-link">Home</a>
+      <a data-nav="learn" href="#learn" class="nav-link">Learn</a>
+      <a data-nav="detector" href="#detector" class="nav-link">Detector</a>
+      <a data-nav="scenarios" href="#scenarios" class="nav-link">Scenarios</a>
+      <a data-nav="quiz" href="#quiz" class="nav-link">Quiz</a>
+      <a data-nav="toolkit" href="#toolkit" class="nav-link">Toolkit</a>
+      <a data-nav="report" href="#report" class="nav-link">Report</a>
+      <a data-nav="cep" href="#cep" class="nav-link">CEP Program</a>
+      <a data-nav="survey" href="#survey" class="nav-link">Survey</a>
+      <a data-nav="analytics" href="#analytics" class="nav-link">Analytics</a>
+      <a data-nav="about" href="#about" class="nav-link">About</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <a href="#progress" data-nav="progress" class="hidden sm:flex items-center gap-1.5 text-sm border border-line rounded-full pl-2 pr-3 py-1.5 hover:border-trust transition-colors">
+        <span class="text-base">🛡️</span>
+        <span id="badgeCount" class="font-medium">0/8</span>
+      </a>
+      <button id="navToggle" class="lg:hidden w-9 h-9 flex items-center justify-center border border-line rounded-lg" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="#101A2B" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobileNav" class="hidden lg:hidden border-t border-line bg-paper-100 px-5 py-3 flex flex-col gap-3 text-sm">
+    <a data-nav="home" href="#home">Home</a>
+    <a data-nav="learn" href="#learn">Learn</a>
+    <a data-nav="detector" href="#detector">Detector</a>
+    <a data-nav="scenarios" href="#scenarios">Scenarios</a>
+    <a data-nav="quiz" href="#quiz">Quiz</a>
+    <a data-nav="toolkit" href="#toolkit">Toolkit</a>
+    <a data-nav="report" href="#report">Report</a>
+    <a data-nav="cep" href="#cep">CEP Program</a>
+    <a data-nav="survey" href="#survey">Survey</a>
+    <a data-nav="analytics" href="#analytics">Analytics</a>
+    <a data-nav="about" href="#about">About</a>
+    <a data-nav="progress" href="#progress">Progress (<span id="badgeCountMobile">0/8</span>)</a>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<main>
+<section id="view-home" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 pt-14 pb-20 grid lg:grid-cols-2 gap-14 items-center">
+    <div>
+      <p class="case-number reveal">CASE FILE / AWARENESS PROGRAM</p>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold leading-[1.08] mt-3 reveal">
+        Most scams don't look like scams. That's the whole trick.
+      </h1>
+      <p class="mt-5 text-ink-700/70 text-lg max-w-md reveal">
+        ShieldWise teaches you to read the small signals — an odd link, a rushed deadline, a request that shouldn't exist — before they cost you money or data.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 reveal">
+        <a href="#detector" data-nav="detector" class="bg-ink text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">Check a message now</a>
+        <a href="#quiz" data-nav="quiz" class="border border-line px-5 py-3 rounded-lg text-sm font-medium hover:border-trust transition-colors">Take the awareness quiz</a>
+      </div>
+      <div class="mt-10 grid grid-cols-3 gap-6 max-w-md reveal">
+        <div><div class="font-display text-2xl font-semibold" data-count="1930">0</div><div class="text-xs text-ink-700/60 mt-1">India cybercrime helpline</div></div>
+        <div><div class="font-display text-2xl font-semibold"><span data-count="6">0</span></div><div class="text-xs text-ink-700/60 mt-1">Scam categories covered</div></div>
+        <div><div class="font-display text-2xl font-semibold"><span data-count="83">0</span>%</div><div class="text-xs text-ink-700/60 mt-1">of fraud starts with a message*</div></div>
+      </div>
+      <p class="text-[11px] text-ink-700/40 mt-2 reveal">*Illustrative figure for awareness purposes — see About for sourcing notes.</p>
+    </div>
+
+    <div class="reveal">
+      <div class="relative bg-ink rounded-2xl p-1 shadow-2xl shadow-ink/20 overflow-hidden">
+        <canvas id="heroCanvas" aria-hidden="true"></canvas>
+        <div class="scanline" id="scanline" style="top:0"></div>
+        <div class="bg-ink-800 rounded-xl p-5 sm:p-6 font-mono text-[13px] leading-relaxed text-white/90 relative">
+          <div class="flex items-center gap-2 mb-4 text-white/40 text-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-signal/70"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-caution/70"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-trust/70"></span>
+            <span class="ml-2">incoming-message.txt</span>
+          </div>
+          <p>Dear Customer,</p>
+          <p class="mt-3">Your <span class="scan-target flag-hit">SBI account will be BLOCKED in 2 hours</span>. To avoid suspension, verify immediately using the link below and enter your <span class="scan-target flag-hit">UPI PIN / OTP</span> to confirm your identity.</p>
+          <p class="mt-3"><span class="scan-target flag-hit">bit.ly/sbi-verify-now2</span></p>
+          <p class="mt-3">This is an <span class="scan-target flag-hit">URGENT</span> auto-generated message. Do not ignore.</p>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center justify-between text-sm">
+        <span class="text-ink-700/60">Live scan of a real-world phishing pattern</span>
+        <span id="scanVerdict" class="font-medium text-signal opacity-0 transition-opacity">3 red flags found</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- scam of the week -->
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 pb-16">
+    <div class="reveal border border-line rounded-2xl bg-paper-100 p-6 sm:p-8 flex flex-col sm:flex-row gap-6 sm:items-center justify-between">
+      <div>
+        <p class="text-xs font-medium text-trust uppercase tracking-wide">Spotlight</p>
+        <h3 class="font-display text-xl font-semibold mt-1">AI voice-clone "emergency" calls are rising fast</h3>
+        <p class="text-ink-700/70 text-sm mt-1 max-w-xl">Scammers clone a relative's voice from a few seconds of public video, then call in panic asking for urgent money transfers. Learn the pattern before it reaches you.</p>
+      </div>
+      <a href="#learn" data-nav="learn" data-cat="ai" class="shrink-0 border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust hover:bg-white transition-all hover:-translate-y-0.5">Read the case →</a>
+    </div>
+  </div>
+
+  <!-- quick nav -->
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 pb-24">
+    <h2 class="font-display text-2xl font-semibold reveal">Three ways to build the habit</h2>
+    <div class="grid sm:grid-cols-3 gap-5 mt-6">
+      <a href="#detector" data-nav="detector" class="reveal lift block border border-line rounded-2xl p-6 bg-paper-100 hover:border-trust">
+        <div class="text-2xl">🔎</div>
+        <h3 class="font-display font-semibold mt-3">Scam Detector</h3>
+        <p class="text-sm text-ink-700/70 mt-1">Paste a message or answer guided questions to get an instant risk score.</p>
+      </a>
+      <a href="#scenarios" data-nav="scenarios" class="reveal lift block border border-line rounded-2xl p-6 bg-paper-100 hover:border-trust">
+        <div class="text-2xl">🧭</div>
+        <h3 class="font-display font-semibold mt-3">What Would You Do?</h3>
+        <p class="text-sm text-ink-700/70 mt-1">Live through realistic scam moments and see the real-world consequence of each choice.</p>
+      </a>
+      <a href="#quiz" data-nav="quiz" class="reveal lift block border border-line rounded-2xl p-6 bg-paper-100 hover:border-trust">
+        <div class="text-2xl">📝</div>
+        <h3 class="font-display font-semibold mt-3">Awareness Quiz</h3>
+        <p class="text-sm text-ink-700/70 mt-1">Test what you know across every category, with a full explanation for each answer.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEARN ============ -->
+<section id="view-learn" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">LEARN</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">Six ways money and identity get stolen</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">Each entry below follows the same case format: how it works, the signals that give it away, and what to actually do. Open one to read it in full.</p>
+
+    <div id="categoryLedger" class="mt-8 border border-line rounded-2xl overflow-hidden bg-paper-100"></div>
+    <div id="categoryDetail" class="mt-8"></div>
+
+    <div class="reveal mt-14">
+      <h2 class="font-display text-xl font-semibold">The manipulation underneath every scam</h2>
+      <p class="text-sm text-ink-700/70 mt-1 max-w-2xl">Every category above uses one or more of these psychological tactics. Recognising the tactic itself — not just the specific scam — is what actually transfers to a scam you haven't seen before.</p>
+      <div id="manipulationBox" class="grid sm:grid-cols-2 gap-4 mt-6"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DETECTOR ============ -->
+<section id="view-detector" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">INTERACTIVE TOOL</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">Red-Flag Checker</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">Use whichever mode fits what's in front of you: scan the actual text of a message, check a suspicious link, or answer a short guided checklist.</p>
+
+    <div class="mt-6 flex flex-wrap gap-2 border-b border-line pb-1" role="tablist">
+      <button class="det-tab px-4 py-2.5 text-sm font-medium border-b-2 border-ink whitespace-nowrap" data-tab="scan">Paste a message</button>
+      <button class="det-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-ink-700/60 whitespace-nowrap" data-tab="url">Check a link</button>
+      <button class="det-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-ink-700/60 whitespace-nowrap" data-tab="vishing">Listen to a call</button>
+      <button class="det-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-ink-700/60 whitespace-nowrap" data-tab="checklist">Guided checklist</button>
+    </div>
+
+    <div id="det-scan" class="mt-8 grid lg:grid-cols-2 gap-8">
+      <div>
+        <label for="scanInput" class="text-sm font-medium">Paste an SMS, email or chat message</label>
+        <textarea id="scanInput" rows="10" class="mt-2 w-full border border-line rounded-xl p-4 font-mono text-sm focus:border-trust outline-none" placeholder="e.g. Dear customer, your account will be blocked, click here to verify your OTP...">Congratulations! You have WON a lucky draw prize of Rs 50,000. Click http://bit.ly/claim-prize-now and share your OTP within 30 minutes to claim, or it will EXPIRE.</textarea>
+        <button id="runScan" class="mt-3 bg-ink text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">Scan message</button>
+      </div>
+      <div>
+        <div class="text-sm font-medium mb-2">Result</div>
+        <div id="scanResultBox" class="border border-line rounded-xl p-5 bg-paper-100 min-h-[220px]">
+          <p class="text-sm text-ink-700/60">Scan a message to see its risk score and the exact phrases that triggered it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="det-url" class="mt-8 hidden grid lg:grid-cols-2 gap-8">
+      <div>
+        <label for="urlInput" class="text-sm font-medium">Paste a link you're unsure about</label>
+        <input id="urlInput" type="text" class="mt-2 w-full border border-line rounded-xl p-4 font-mono text-sm focus:border-trust outline-none" placeholder="e.g. http://bit.ly/sbi-verify-secure-login" value="http://sbi-verify-secure.tk/login.php?redirect=account@confirm">
+        <button id="runUrlScan" class="mt-3 bg-ink text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">Check link</button>
+        <p class="text-xs text-ink-700/50 mt-3">This looks for known suspicious patterns in the link's structure — it is not a live threat-intelligence lookup. Always verify independently before entering any details.</p>
+      </div>
+      <div>
+        <div class="text-sm font-medium mb-2">Result</div>
+        <div id="urlResultBox" class="border border-line rounded-xl p-5 bg-paper-100 min-h-[220px]">
+          <p class="text-sm text-ink-700/60">Check a link to see which structural red flags it matches.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="det-vishing" class="mt-8 hidden">
+      <div class="grid lg:grid-cols-3 gap-3" id="vishingPicker"></div>
+      <div id="vishingPlayer" class="mt-6 border border-line rounded-2xl p-6 bg-paper-100 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="font-display font-semibold" id="vishingTitle"></h3>
+          <div class="flex gap-2">
+            <button id="vishingPlay" class="border border-line px-4 py-2 rounded-lg text-sm font-medium hover:border-trust transition-colors flex items-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play call
+            </button>
+            <button id="vishingStop" class="border border-line px-4 py-2 rounded-lg text-sm font-medium hover:border-signal transition-colors hidden">Stop</button>
+          </div>
+        </div>
+        <p class="text-xs text-ink-700/50 mt-2">Uses your browser's built-in text-to-speech — no audio is uploaded anywhere. Listen first, then check the transcript for what you caught.</p>
+        <button id="vishingReveal" class="mt-4 text-sm text-trust underline">Show transcript &amp; red flags</button>
+        <div id="vishingTranscript" class="hidden mt-4 border-t border-line pt-4">
+          <p id="vishingScriptText" class="text-sm leading-relaxed"></p>
+          <h4 class="text-sm font-medium mt-4">Red flags in this call</h4>
+          <ul id="vishingFlags" class="text-sm text-ink-700/70 mt-2 space-y-1"></ul>
+        </div>
+        <p id="vishingUnsupported" class="hidden text-sm text-caution mt-4 border border-line rounded-lg p-3 bg-paper-200">Your browser doesn't support text-to-speech playback — read the transcript above instead.</p>
+      </div>
+    </div>
+
+    <div id="det-checklist" class="mt-8 hidden">
+      <div id="checklistQs" class="grid sm:grid-cols-2 gap-4"></div>
+      <div class="mt-6 border border-line rounded-xl p-5 bg-paper-100">
+        <div class="flex items-center justify-between text-sm mb-2">
+          <span class="font-medium">Risk level</span>
+          <span id="checklistScoreLabel" class="font-medium">Answer the checklist</span>
+        </div>
+        <div class="risk-meter"><div id="checklistFill" class="risk-fill" style="width:0%;background:#0E7C7B"></div></div>
+        <p id="checklistExplain" class="text-sm text-ink-700/70 mt-3"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCENARIOS ============ -->
+<section id="view-scenarios" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">SIMULATION</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">What Would You Do?</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">Realistic moments, no right-answer lecturing up front — choose first, then see what actually happens next.</p>
+    <div id="scenarioNav" class="mt-6 flex flex-wrap gap-2"></div>
+    <div id="scenarioBody" class="mt-6 border border-line rounded-2xl bg-paper-100 p-6 sm:p-8"></div>
+  </div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section id="view-quiz" class="view">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">SELF-TEST</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">Awareness Quiz</h1>
+    <p class="text-ink-700/70 mt-3">10 questions across every category. Every answer — right or wrong — comes with an explanation.</p>
+
+    <div id="quizIntro" class="mt-8 border border-line rounded-2xl p-6 bg-paper-100">
+      <p class="text-sm text-ink-700/70">Untimed. Retake as many times as you like — your best score is saved to your progress.</p>
+      <button id="startQuiz" class="mt-4 bg-ink text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">Start quiz</button>
+    </div>
+
+    <div id="quizPlay" class="mt-8 hidden">
+      <div class="flex items-center justify-between text-xs text-ink-700/60 mb-2">
+        <span id="quizProgress">Question 1 of 10</span>
+        <span id="quizScoreLive">Score: 0</span>
+      </div>
+      <div class="h-1.5 bg-paper-200 rounded-full overflow-hidden mb-6"><div id="quizBar" class="h-full bg-trust transition-all duration-500" style="width:10%"></div></div>
+      <div id="quizQBox" class="border border-line rounded-2xl p-6 sm:p-8 bg-paper-100"></div>
+    </div>
+
+    <div id="quizResult" class="mt-8 hidden border border-line rounded-2xl p-6 sm:p-8 bg-paper-100 text-center">
+      <div class="font-display text-4xl font-semibold" id="quizFinalScore">0/10</div>
+      <p id="quizFinalMsg" class="text-ink-700/70 mt-2"></p>
+      <div class="flex gap-3 justify-center mt-5">
+        <button id="retakeQuiz" class="border border-line px-5 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors">Retake quiz</button>
+        <a href="#analytics" data-nav="analytics" class="bg-ink text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">See analytics</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOOLKIT ============ -->
+<section id="view-toolkit" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number reveal">REFERENCE</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2 reveal">Safety Toolkit</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl reveal">Print these, save them, or just skim them once — they hold up across every category above.</p>
+
+    <!-- Personal Cyber Safety Checklist -->
+    <div class="reveal mt-10 border border-line rounded-2xl p-6 sm:p-8 bg-paper-100">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="font-display text-xl font-semibold">Your Personal Cyber Safety Checklist</h2>
+          <p class="text-sm text-ink-700/70 mt-1 max-w-xl">A quick self-audit, not a category guide — tick what's already true for you. Saved on this device only.</p>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="font-display text-2xl font-semibold" id="personalPct">0%</div>
+          <div class="text-xs text-ink-700/60">self-audit score</div>
+        </div>
+      </div>
+      <div class="risk-meter mt-4"><div id="personalFill" class="risk-fill" style="width:0%;background:#0E7C7B"></div></div>
+      <div id="personalChecklistBox" class="grid sm:grid-cols-2 gap-3 mt-5"></div>
+    </div>
+
+    <div id="checklistCards" class="grid md:grid-cols-2 gap-5 mt-10"></div>
+
+    <!-- Red Flags Library -->
+    <div class="reveal mt-10">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="font-display text-xl font-semibold">Red Flags Library</h2>
+        <input id="flagSearch" type="text" placeholder="Search red flags…" class="border border-line rounded-lg px-3 py-2 text-sm w-56 focus:border-trust outline-none">
+      </div>
+      <p class="text-sm text-ink-700/70 mt-1 max-w-2xl">Every red flag from every category above, in one searchable list.</p>
+      <div id="flagsLibraryBox" class="mt-5 border border-line rounded-2xl overflow-hidden bg-paper-100"></div>
+      <p id="flagsEmptyNote" class="hidden text-sm text-ink-700/60 mt-3">No red flags match that search.</p>
+    </div>
+
+    <!-- Glossary -->
+    <div class="reveal mt-10">
+      <h2 class="font-display text-xl font-semibold">Glossary</h2>
+      <p class="text-sm text-ink-700/70 mt-1 max-w-2xl">Short definitions for terms used across this platform.</p>
+      <div id="glossaryBox" class="grid sm:grid-cols-2 gap-4 mt-5"></div>
+    </div>
+
+    <!-- Scam-Alert graphic generator -->
+    <div class="reveal mt-10 border border-line rounded-2xl p-6 sm:p-8 bg-paper-100">
+      <h2 class="font-display text-xl font-semibold">Create a shareable scam-alert graphic</h2>
+      <p class="text-sm text-ink-700/70 mt-1 max-w-xl">Pick a category, download the image, and share it on WhatsApp status or Instagram — spreading this is as useful as reading it.</p>
+      <div class="grid sm:grid-cols-[220px_1fr] gap-6 mt-5 items-start">
+        <div>
+          <label for="alertCategorySelect" class="text-sm font-medium">Category</label>
+          <select id="alertCategorySelect" class="mt-1.5 w-full border border-line rounded-lg px-3 py-2 text-sm focus:border-trust outline-none"></select>
+          <button id="downloadAlert" class="mt-4 w-full bg-ink text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">Download image</button>
+        </div>
+        <div class="flex justify-center">
+          <canvas id="alertCanvas" width="1080" height="1080" style="width:100%;max-width:280px;" class="rounded-xl border border-line"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family Safety Card -->
+    <div class="reveal mt-10 border border-line rounded-2xl p-6 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h3 class="font-display font-semibold">Family Cyber-Safety Card</h3>
+        <p class="text-sm text-ink-700/70 mt-1">A printable card with a family safe word and emergency steps — especially useful for older relatives.</p>
+      </div>
+      <a href="#familycard" data-nav="familycard" class="shrink-0 border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors">Create card</a>
+    </div>
+
+    <div class="reveal mt-10 border border-line rounded-2xl p-6 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h3 class="font-display font-semibold">One-page safety poster</h3>
+        <p class="text-sm text-ink-700/70 mt-1">A printable summary of every checklist here — useful for a notice board, hostel room or shop counter.</p>
+      </div>
+      <button id="printPoster" class="shrink-0 border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors">Print / Save as PDF</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REPORT ============ -->
+<section id="view-report" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">EMERGENCY GUIDANCE</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">If it already happened, act in this order</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">Speed matters more than anything else in the first hour. Follow these steps in sequence.</p>
+
+    <ol class="mt-8 space-y-4 max-w-2xl">
+      <li class="reveal lift flex gap-4 border border-line rounded-xl p-5 bg-paper-100"><span class="font-display font-semibold text-trust">1</span><div><h3 class="font-medium">Call <a href="tel:1930" class="text-trust underline">1930</a> immediately</h3><p class="text-sm text-ink-700/70 mt-1">India's national cybercrime helpline. It can freeze a fraudulent transaction within the "golden hour" if you call fast enough.</p></div></li>
+      <li class="reveal lift flex gap-4 border border-line rounded-xl p-5 bg-paper-100"><span class="font-display font-semibold text-trust">2</span><div><h3 class="font-medium">File a complaint at <a href="https://www.cybercrime.gov.in/" target="_blank" rel="noopener" class="text-trust underline">cybercrime.gov.in</a></h3><p class="text-sm text-ink-700/70 mt-1">Keep screenshots, transaction IDs, and the sender's number or UPI ID ready before you start.</p></div></li>
+      <li class="reveal lift flex gap-4 border border-line rounded-xl p-5 bg-paper-100"><span class="font-display font-semibold text-trust">3</span><div><h3 class="font-medium">Contact your bank's fraud helpline</h3><p class="text-sm text-ink-700/70 mt-1">Ask them to block the card/UPI handle and flag the transaction for reversal.</p></div></li>
+      <li class="reveal lift flex gap-4 border border-line rounded-xl p-5 bg-paper-100"><span class="font-display font-semibold text-trust">4</span><div><h3 class="font-medium">Change passwords and enable 2FA</h3><p class="text-sm text-ink-700/70 mt-1">Start with email and banking apps — those unlock everything else.</p></div></li>
+      <li class="reveal lift flex gap-4 border border-line rounded-xl p-5 bg-paper-100"><span class="font-display font-semibold text-trust">5</span><div><h3 class="font-medium">Report the account on the platform itself</h3><p class="text-sm text-ink-700/70 mt-1">WhatsApp, Instagram and email providers all have a direct "report scam/phishing" option — it helps stop the next person.</p></div></li>
+    </ol>
+
+    <div class="mt-10 grid sm:grid-cols-3 gap-5 max-w-3xl">
+      <a href="tel:1930" class="reveal lift block border border-line rounded-xl p-5 bg-paper-100 hover:border-trust"><div class="text-xs text-ink-700/60">National Helpline</div><div class="font-display text-xl font-semibold mt-1">1930</div></a>
+      <a href="https://www.cybercrime.gov.in/" target="_blank" rel="noopener" class="reveal lift block border border-line rounded-xl p-5 bg-paper-100 hover:border-trust"><div class="text-xs text-ink-700/60">Online Portal</div><div class="font-display text-lg font-semibold mt-1">cybercrime.gov.in</div></a>
+      <div class="reveal lift border border-line rounded-xl p-5 bg-paper-100"><div class="text-xs text-ink-700/60">Also report to</div><div class="font-display text-lg font-semibold mt-1">Your bank + the platform</div></div>
+    </div>
+
+    <!-- Interactive: "What exactly happened?" -->
+    <div class="reveal mt-12 max-w-3xl">
+      <h2 class="font-display text-xl font-semibold">What exactly happened?</h2>
+      <p class="text-sm text-ink-700/70 mt-1">Pick the situation closest to yours for a tailored next-step checklist.</p>
+      <div id="emergencyPicker" class="grid sm:grid-cols-2 gap-3 mt-5"></div>
+      <div id="emergencyResult" class="mt-6"></div>
+    </div>
+
+    <!-- Evidence checklist -->
+    <div class="reveal mt-12 max-w-3xl">
+      <h2 class="font-display text-xl font-semibold">Evidence worth preserving</h2>
+      <p class="text-sm text-ink-700/70 mt-1">Before you contact your bank or file a complaint, gather what you can — it speeds everything up.</p>
+      <ul class="mt-4 grid sm:grid-cols-2 gap-2 text-sm text-ink-700/80">
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">Screenshots of the message/call log</li>
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">Transaction ID / UTR number</li>
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">The sender's phone number, UPI ID or email</li>
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">The suspicious website URL, if any</li>
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">Date and time it happened</li>
+        <li class="border border-line rounded-lg px-3 py-2 bg-paper-100">Your bank/account details (account holder, not PIN/CVV)</li>
+      </ul>
+      <div class="mt-4 border border-signal/30 bg-signal-100 rounded-lg p-4 text-sm text-signal">
+        <strong>Never share your OTP, PIN, password, CVV or full banking credentials with ShieldWise, this checklist, or anyone else</strong> — not even to "prove" what happened. Official complaint channels never need these either.
+      </div>
+    </div>
+
+    <!-- Suspect / identifier check — honest, no fake lookup -->
+    <div class="reveal mt-12 max-w-3xl border border-line rounded-2xl p-6 bg-paper-100">
+      <h2 class="font-display text-lg font-semibold">Checking a suspicious number, email or website</h2>
+      <p class="text-sm text-ink-700/70 mt-2">ShieldWise does not run its own lookup database — that would risk showing an unverified or fabricated result, which is worse than no result at all. The National Cyber Crime Reporting Portal is the correct place to report a suspicious identifier and see official guidance.</p>
+      <a href="https://www.cybercrime.gov.in/" target="_blank" rel="noopener" class="inline-block mt-3 text-sm text-trust underline">Go to the official portal →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CEP PROGRAM ============ -->
+<section id="view-cep" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">COMMUNITY ENGAGEMENT PROGRAM</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">About this awareness program</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">This platform was built as a Community Engagement Project to reduce phishing, scam and fraud victimisation through practical, self-paced awareness training.</p>
+
+    <div class="grid md:grid-cols-2 gap-8 mt-10">
+      <div>
+        <h3 class="font-display font-semibold text-lg">Objectives</h3>
+        <ul class="mt-3 space-y-2 text-sm text-ink-700/70">
+          <li>• Improve recognition of common scam patterns across digital channels</li>
+          <li>• Give people a concrete, repeatable checklist instead of vague caution</li>
+          <li>• Measure awareness change with a short pre/post survey</li>
+          <li>• Provide a clear, fast path to reporting when something already went wrong</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-display font-semibold text-lg">Target audience</h3>
+        <ul class="mt-3 space-y-2 text-sm text-ink-700/70">
+          <li>• College students and first-time UPI/banking app users</li>
+          <li>• Job seekers and freelancers targeted by fake offers</li>
+          <li>• First-time investors approached via social media "tips"</li>
+          <li>• Families and older relatives, often targeted by voice-based scams</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="font-display font-semibold text-lg mt-12">Methodology</h3>
+    <ol class="mt-4 grid sm:grid-cols-4 gap-4">
+      <li class="reveal lift border border-line rounded-xl p-4 bg-paper-100"><span class="case-number">STEP 1</span><p class="text-sm font-medium mt-1">Research common scam patterns and real case reports</p></li>
+      <li class="reveal lift border border-line rounded-xl p-4 bg-paper-100"><span class="case-number">STEP 2</span><p class="text-sm font-medium mt-1">Build an interactive awareness platform (this site)</p></li>
+      <li class="reveal lift border border-line rounded-xl p-4 bg-paper-100"><span class="case-number">STEP 3</span><p class="text-sm font-medium mt-1">Run a pre-awareness survey with the target group</p></li>
+      <li class="reveal lift border border-line rounded-xl p-4 bg-paper-100"><span class="case-number">STEP 4</span><p class="text-sm font-medium mt-1">Deliver the program, then re-survey to measure change</p></li>
+    </ol>
+
+    <div class="mt-10 border border-line rounded-2xl p-6 bg-paper-100">
+      <h3 class="font-display font-semibold">Expected outcome</h3>
+      <p class="text-sm text-ink-700/70 mt-2 max-w-2xl">A measurable rise in participants' ability to correctly identify scam messages and describe the right reporting steps, benchmarked using the survey and quiz results in the Analytics section.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SURVEY ============ -->
+<section id="view-survey" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">AWARENESS SURVEY</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">Tell us what you knew — before and after</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl">This short survey measures awareness before and after using the platform. Responses feed directly into the Analytics section of this CEP report.</p>
+
+    <div class="mt-8 grid lg:grid-cols-5 gap-8">
+      <div class="lg:col-span-3 border border-line rounded-2xl overflow-hidden bg-paper-100">
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSdVFl4RXhplANOT-2mSwfJV1Hj_qO9prrUCAGzLr4EweWPlZw/viewform?embedded=true"
+          width="100%" height="640" style="border:0" title="Awareness survey form">Loading survey…</iframe>
+      </div>
+      <div class="lg:col-span-2 space-y-4">
+        <div class="border border-line rounded-xl p-5 bg-paper-100">
+          <h3 class="font-medium">Live-connected</h3>
+          <p class="text-sm text-ink-700/70 mt-1">This form is wired to the Analytics page below — every response updates the Before/After charts there automatically when the site is self-hosted (see note on that page).</p>
+        </div>
+        <div class="border border-line rounded-xl p-5 bg-paper-100">
+          <h3 class="font-medium">Suggested questions</h3>
+          <ul class="text-sm text-ink-700/70 mt-2 space-y-1.5">
+            <li>• Have you ever received a message you suspected was a scam?</li>
+            <li>• Rate your confidence in spotting a phishing message (1–5)</li>
+            <li>• What would you do first if you shared your OTP by mistake?</li>
+            <li>• Which of these is a genuine bank practice? (multiple choice)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ANALYTICS ============ -->
+<section id="view-analytics" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number reveal">RESULTS &amp; ANALYTICS</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2 reveal">Program impact, in numbers</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl reveal">Connected to your live survey responses. If this page is opened from Claude's own preview/publish link, the browser blocks the connection to Google — sample data shows instead. Host the file yourself (GitHub Pages / Netlify / Vercel, all free) and it pulls real numbers.</p>
+
+    <div id="liveStatusBar" class="reveal mt-5 flex flex-wrap items-center gap-3 border border-line rounded-xl px-4 py-3 bg-paper-100 text-sm">
+      <span id="liveStatusDot" class="w-2 h-2 rounded-full bg-caution pulse-dot"></span>
+      <span id="liveStatusText" aria-live="polite">Checking for live survey data…</span>
+      <span id="lastUpdatedText" class="text-ink-700/50 text-xs"></span>
+      <button id="refreshLive" class="ml-auto border border-line px-3 py-1.5 rounded-lg text-xs font-medium hover:border-trust transition-colors flex items-center gap-1.5">
+        <svg id="refreshIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" class="transition-transform"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh now
+      </button>
+    </div>
+
+    <!-- survey CTA -->
+    <div class="reveal mt-6 border border-line rounded-2xl p-6 bg-ink text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-medium text-trust uppercase tracking-wide">Help make this data real</p>
+        <h3 class="font-display text-lg font-semibold mt-1">Every chart below gets more accurate with one more response</h3>
+        <p class="text-sm text-white/70 mt-1 max-w-lg">Haven't filled it in yet? It takes about two minutes and directly shapes the numbers on this page.</p>
+      </div>
+      <a href="#survey" data-nav="survey" class="shrink-0 bg-white text-ink px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-trust hover:text-white transition-colors">Take the survey</a>
+    </div>
+
+    <!-- live stat cards -->
+    <div id="statCards" class="grid sm:grid-cols-4 gap-4 mt-8">
+      <div class="reveal border border-line rounded-xl p-5 bg-paper-100">
+        <div class="text-xs text-ink-700/60">Total responses</div>
+        <div class="font-display text-2xl font-semibold mt-1"><span id="statTotal" class="skeleton inline-block w-10 h-7 align-middle"></span></div>
+      </div>
+      <div class="reveal border border-line rounded-xl p-5 bg-paper-100">
+        <div class="text-xs text-ink-700/60">Confidence before</div>
+        <div class="font-display text-2xl font-semibold mt-1"><span id="statConfBefore" class="skeleton inline-block w-10 h-7 align-middle"></span></div>
+      </div>
+      <div class="reveal border border-line rounded-xl p-5 bg-paper-100">
+        <div class="text-xs text-ink-700/60">Confidence after</div>
+        <div class="font-display text-2xl font-semibold mt-1 text-trust"><span id="statConfAfter" class="skeleton inline-block w-10 h-7 align-middle"></span></div>
+      </div>
+      <div class="reveal border border-line rounded-xl p-5 bg-paper-100">
+        <div class="text-xs text-ink-700/60">Knowledge-check accuracy (after)</div>
+        <div class="font-display text-2xl font-semibold mt-1 text-trust"><span id="statKnowAfter" class="skeleton inline-block w-10 h-7 align-middle"></span></div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8 mt-8">
+      <div class="reveal border border-line rounded-2xl p-6 bg-paper-100">
+        <h3 class="font-medium mb-4">Awareness confidence &amp; knowledge: before vs after</h3>
+        <div id="chartBASkeleton" class="skeleton" style="height:220px"></div>
+        <canvas id="chartBeforeAfter" height="220" class="hidden"></canvas>
+      </div>
+      <div class="reveal border border-line rounded-2xl p-6 bg-paper-100">
+        <h3 class="font-medium mb-4">Scam categories personally encountered (survey)</h3>
+        <div id="chartCatSkeleton" class="skeleton" style="height:220px"></div>
+        <canvas id="chartCategory" height="220" class="hidden"></canvas>
+        <p id="catEmptyNote" class="hidden text-sm text-ink-700/60 mt-3">No category data yet — once responses come in with the checkbox question answered, this fills in automatically.</p>
+      </div>
+      <div class="reveal border border-line rounded-2xl p-6 bg-paper-100 lg:col-span-2">
+        <h3 class="font-medium mb-4">Your live quiz attempts (this device)</h3>
+        <canvas id="chartLive" height="120"></canvas>
+        <div id="liveEmptyNote" class="hidden text-sm text-ink-700/70 mt-3 border border-line rounded-lg p-4 bg-paper-200">
+          <p class="font-medium">No attempts yet on this device.</p>
+          <p class="mt-1">Take the <a href="#quiz" data-nav="quiz" class="text-trust underline">awareness quiz</a> once and it'll show up here — this chart is local to your browser, separate from the survey data above.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROGRESS / BADGES ============ -->
+<section id="view-progress" class="view">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number reveal">YOUR PROGRESS</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2 reveal">Your awareness dashboard</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl reveal">Stored locally in your browser only — nothing is uploaded, and no account is needed.</p>
+
+    <div id="dashboardStats" class="reveal mt-8 grid sm:grid-cols-2 gap-5"></div>
+
+    <div id="certificateCard" class="reveal mt-8"></div>
+
+    <h2 class="font-display text-xl font-semibold mt-12 reveal">Badges earned on this device</h2>
+    <div id="badgeGrid" class="grid sm:grid-cols-3 gap-5 mt-6"></div>
+    <button id="resetProgress" class="mt-8 text-sm text-signal underline">Reset progress on this device</button>
+  </div>
+</section>
+
+<!-- ============ CERTIFICATE (reached only via the dashboard button, not in main nav) ============ -->
+<section id="view-certificate" class="view">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-14">
+    <div class="no-print flex items-center justify-between mb-8">
+      <a href="#progress" data-nav="progress" class="text-sm text-ink-700/60 hover:text-trust">← Back to dashboard</a>
+      <button id="printCertificate" class="border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors">Print / Save as PDF</button>
+    </div>
+    <div class="border-4 border-double border-ink rounded-2xl p-10 sm:p-14 text-center bg-paper-100">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="mx-auto"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#0E7C7B" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.2 12 2.6 2.6 5-5" stroke="#0E7C7B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="case-number mt-4">CERTIFICATE OF COMPLETION</p>
+      <p class="text-ink-700/70 mt-6">This certifies that</p>
+      <h1 id="certName" class="font-display text-3xl sm:text-4xl font-semibold mt-2">Participant</h1>
+      <p class="text-ink-700/70 mt-4 max-w-md mx-auto">has completed the ShieldWise Phishing, Scam &amp; Fraud Detection Awareness Program — including every scam category, all decision scenarios, the awareness quiz and the personal safety checklist.</p>
+      <div class="flex items-center justify-center gap-8 mt-8 text-sm text-ink-700/60">
+        <div><div class="text-xs">Completed on</div><div id="certDate" class="font-medium text-ink mt-0.5"></div></div>
+        <div><div class="text-xs">Certificate ID</div><div id="certId" class="font-mono text-ink mt-0.5"></div></div>
+      </div>
+      <p class="text-xs text-ink-700/40 mt-10">Awareness education certificate for a Community Engagement Project — not a professional accreditation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAMILY SAFETY CARD (reached via Toolkit, not in main nav) ============ -->
+<section id="view-familycard" class="view">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
+    <div class="no-print flex items-center justify-between mb-8">
+      <a href="#toolkit" data-nav="toolkit" class="text-sm text-ink-700/60 hover:text-trust">← Back to Toolkit</a>
+      <button id="printFamilyCard" class="border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors">Print / Save as PDF</button>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div class="no-print">
+        <h1 class="font-display text-2xl font-semibold">Family Cyber-Safety Card</h1>
+        <p class="text-sm text-ink-700/70 mt-2 max-w-md">Fill this in once, print it, and keep it near a landline or with an older relative — the safe word is the single most useful defence against a voice-clone "emergency" call.</p>
+        <div class="mt-6 space-y-4 max-w-sm">
+          <div>
+            <label class="text-sm font-medium">Family member's name</label>
+            <input id="fcName" type="text" placeholder="e.g. Amma / Papa / Grandma" class="mt-1.5 w-full border border-line rounded-lg px-3 py-2 text-sm focus:border-trust outline-none">
+          </div>
+          <div>
+            <label class="text-sm font-medium">A trusted emergency contact</label>
+            <input id="fcContact" type="text" placeholder="e.g. Rohan (son) — 98765 43210" class="mt-1.5 w-full border border-line rounded-lg px-3 py-2 text-sm focus:border-trust outline-none">
+          </div>
+          <div>
+            <label class="text-sm font-medium">Your family's safe word</label>
+            <input id="fcSafeWord" type="text" placeholder="A word only your family knows" class="mt-1.5 w-full border border-line rounded-lg px-3 py-2 text-sm focus:border-trust outline-none">
+            <p class="text-xs text-ink-700/50 mt-1">Agree on this in person, never over a call or message. If a caller can't say it, hang up and verify another way.</p>
+          </div>
+        </div>
+      </div>
+      <div class="border-4 border-double border-ink rounded-2xl p-8 bg-paper-100">
+        <div class="flex items-center gap-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#0E7C7B" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.2 12 2.6 2.6 5-5" stroke="#0E7C7B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h2 class="font-display font-semibold">Family Cyber-Safety Card</h2>
+        </div>
+        <p class="text-sm text-ink-700/70 mt-3">For <span id="fcNamePreview" class="font-medium text-ink">[family member]</span> — if a call sounds urgent or frightening:</p>
+        <ol class="mt-4 space-y-2 text-sm">
+          <li class="flex gap-2"><span class="font-mono text-trust">1</span> Hang up. Call back on a number you already have saved.</li>
+          <li class="flex gap-2"><span class="font-mono text-trust">2</span> Ask for the family safe word: <strong id="fcSafeWordPreview">[safe word]</strong></li>
+          <li class="flex gap-2"><span class="font-mono text-trust">3</span> Never send money or OTPs based on a call alone.</li>
+          <li class="flex gap-2"><span class="font-mono text-trust">4</span> Call <span id="fcContactPreview" class="font-medium">[emergency contact]</span> to check what's really happening.</li>
+        </ol>
+        <div class="mt-5 border-t border-line pt-4 text-sm text-ink-700/70">
+          <p>National cybercrime helpline: <strong class="text-ink">1930</strong></p>
+          <p class="mt-1">Report online: <strong class="text-ink">cybercrime.gov.in</strong></p>
+        </div>
+        <p class="text-xs text-ink-700/40 mt-6">Kept by this family for personal reference — ShieldWise Awareness Program.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="view-about" class="view">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-14">
+    <p class="case-number">PROJECT INFORMATION</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2">About ShieldWise</h1>
+    <p class="text-ink-700/70 mt-4 leading-relaxed">ShieldWise is a Community Engagement Project (CEP) built to make phishing, scam and fraud awareness practical rather than theoretical — through an interactive detector, realistic decision scenarios, and a self-graded quiz, backed by a measurable pre/post survey.</p>
+
+    <h3 class="font-display font-semibold text-lg mt-8">Built with</h3>
+    <p class="text-sm text-ink-700/70 mt-2">HTML, Tailwind CSS, vanilla JavaScript, GSAP and Chart.js — entirely free, open-source front-end technology with zero paid APIs. Hosted for free on Vercel, Netlify or GitHub Pages. Progress is stored locally via <code class="font-mono text-xs bg-paper-200 px-1 py-0.5 rounded">localStorage</code>, and survey data via a free Google Form.</p>
+
+    <h3 class="font-display font-semibold text-lg mt-8">Your data and privacy</h3>
+    <ul class="text-sm text-ink-700/70 mt-2 space-y-2">
+      <li>• The message scanner, URL checker, and vishing simulator run <strong>entirely in your browser</strong>. Nothing you paste into them is sent to ShieldWise, or to any third party — there is no backend and no external analysis API involved.</li>
+      <li>• No live domain-reputation or threat-intelligence service is used, because doing so safely would require a backend to protect an API key, which this project intentionally doesn't have. Where that limits the checkers, the tool says so directly rather than faking a result.</li>
+      <li>• Your badges, quiz history, checklist answers, and family safety card are saved only in your own browser's local storage — never uploaded anywhere. Clearing your browser data clears them.</li>
+      <li>• Survey responses go directly to Google's own Forms/Sheets infrastructure, not through ShieldWise — this site only reads back the aggregated response data to draw the Analytics charts.</li>
+      <li>• ShieldWise never asks for and should never be given your OTP, PIN, password, CVV or full banking credentials, even to "demonstrate" a scam.</li>
+    </ul>
+
+    <h3 class="font-display font-semibold text-lg mt-8">Disclaimer</h3>
+    <p class="text-sm text-ink-700/70 mt-2">Statistics marked with an asterisk are illustrative, used to demonstrate the platform's data-presentation features. Replace them with cited figures from RBI, CERT-In or NCRB reports for a submission-ready report. This platform provides general safety education and is not a substitute for professional legal or financial advice.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="border-t border-line mt-10">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row justify-between gap-4 text-sm text-ink-700/60">
+    <span>ShieldWise — a Community Engagement Project on scam &amp; fraud awareness.</span>
+    <span>National cybercrime helpline: <a href="tel:1930" class="text-ink underline">1930</a> · <a href="https://www.cybercrime.gov.in/" target="_blank" rel="noopener" class="text-ink underline">cybercrime.gov.in</a></span>
+  </div>
+</footer>
+
+<div id="toastContainer" aria-live="polite"></div>
+<button id="backToTop" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script>
+/* =================== DATA =================== */
+const CATEGORIES = [
+  { id:'upi', name:'UPI & Banking Fraud', icon:'💳',
+    summary:'Fake bank/UPI messages that push you to "verify" or "reactivate" using your PIN or OTP.',
+    how:['You get an SMS/call claiming your account will be blocked or a payment failed.','A link or number leads to a fake verification step.','You are asked to enter your UPI PIN, OTP or scan a QR code to "receive" money.','Entering the PIN actually authorises an outgoing payment.'],
+    flags:['Urgency: "blocked in 2 hours"','Asks for PIN/OTP to "receive" money — you never need a PIN to receive','Shortened or misspelled bank links','Request to scan a QR code to get a refund'],
+    doList:['Verify by calling the bank\'s official number from their website, not the number in the message','Remember: PIN is only ever needed to pay, never to receive'],
+    dontList:['Never share OTP/PIN with anyone, including "bank staff"','Never scan a QR code someone else sent you to receive money'],
+    case:'A student received an SMS saying their bank account was frozen and had to "unfreeze" it by scanning a QR code. Scanning it triggered an outgoing payment of ₹4,200.'},
+  { id:'otp', name:'OTP & SIM-Swap Scams', icon:'🔐',
+    summary:'Attackers trick you into revealing an OTP, or take over your SIM entirely to intercept it.',
+    how:['Scammer already has some of your details (leaked data, social media).','They call posing as a delivery agent, bank rep, or telecom staff.','They ask you to "confirm" an OTP that was actually triggered by their own login attempt.','With SIM-swap, they convince your telecom provider to issue a duplicate SIM, receiving all your OTPs directly.'],
+    flags:['Any call asking you to read out an OTP','Unexpected "SIM upgrade" or "KYC update" messages','Your phone suddenly loses network for no reason'],
+    doList:['Treat every OTP as a physical key — it unlocks something for whoever holds it','Contact your telecom provider immediately if your SIM loses signal unexpectedly'],
+    dontList:['Never read an OTP aloud to anyone who calls you','Never share OTPs "to verify you are not a robot"'],
+    case:'A user\'s SIM stopped working for a few hours; by the time they noticed, ₹18,000 had been transferred using OTPs sent to a duplicate SIM.'},
+  { id:'job', name:'Job & Work-From-Home Scams', icon:'💼',
+    summary:'Fake job offers that ask for an upfront "registration fee" or trap you in a task-based payment cycle.',
+    how:['A message offers an unusually high salary for simple tasks (liking videos, reviews).','You complete a few small tasks and get paid a small real amount to build trust.','You are then asked to deposit larger sums to "unlock" bigger tasks or bonuses.','The account disappears once you\'ve paid in enough.'],
+    flags:['Job offer with no interview, offering money for very little effort','Any request to pay to "activate" your account or "unlock" tasks','Contact only via personal WhatsApp/Telegram, never a company email'],
+    doList:['Verify the company\'s existence independently — website, LinkedIn, reviews','Insist on a written offer letter from a verifiable company email domain'],
+    dontList:['Never pay money to receive a job or to "start earning"','Never share bank details before an offer is verified'],
+    case:'A job seeker was offered ₹3,000/day for "product review" tasks on Telegram, paid ₹500 upfront twice, then asked for ₹15,000 to "unlock" the next task level and lost contact with the recruiter.'},
+  { id:'investment', name:'Investment & Trading Scams', icon:'📈',
+    summary:'"Guaranteed return" trading groups and fake apps that show fabricated profits to pull in more money.',
+    how:['You\'re added to a trading/crypto group promising consistent, unrealistic daily returns.','A fake trading app or dashboard shows your investment "growing".','Small withdrawals are allowed early on to build confidence.','Once a larger amount is deposited, withdrawals stop or fees keep appearing.'],
+    flags:['"Guaranteed" or fixed daily/weekly returns','Pressure to invest more right before a "big opportunity" closes','Unregistered apps not listed on official app stores','Advisor contactable only through a personal chat handle'],
+    doList:['Check if the advisor/platform is registered with SEBI (India) or the relevant regulator','Withdraw a real profit fully before ever considering reinvestment'],
+    dontList:['Never invest based on screenshots of other people\'s "profits"','Never pay an additional "release fee" to withdraw your own money'],
+    case:'An investor joined a stock-tips group, saw their fake portfolio "grow" to ₹2 lakh, then was told to pay a ₹40,000 "tax clearance fee" before withdrawal — the group vanished after payment.'},
+  { id:'social', name:'Social Media & Romance Scams', icon:'❤️',
+    summary:'Fake profiles that build an emotional or social connection before asking for money or private data.',
+    how:['A new, attractive or highly-credentialed profile initiates contact.','Conversation moves quickly to a private channel, often avoiding video calls.','An emotional bond or urgent story develops (medical emergency, stuck abroad).','A request for money, gift cards, or intimate images follows — the latter can be used for blackmail.'],
+    flags:['Refuses video calls, always has an excuse','Professes strong feelings unusually fast','Any request for money, however small, "just this once"','Asks for explicit images early in the relationship'],
+    doList:['Do a reverse image search on their profile photo','Tell a trusted friend or family member about the relationship early'],
+    dontList:['Never send money to someone you have not met in person','Never share intimate images with someone you met online'],
+    case:'A user built an online relationship over three weeks; the match then claimed a customs "release fee" was needed to send a gift, and asked for ₹25,000 via UPI.'},
+  { id:'ai', name:'AI Voice-Clone & Deepfake Scams', icon:'🤖',
+    summary:'AI-generated voice or video, cloned from a few public seconds, used to impersonate someone you trust.',
+    how:['Scammer collects a short public voice/video clip (Instagram, YouTube, a call recording).','AI voice-cloning tools recreate that voice convincingly in real time or pre-recorded.','A panicked call comes in — "I\'m in an accident, send money now" — in a voice you recognise.','Video deepfakes are also used for fake investment endorsements from celebrities or executives.'],
+    flags:['Extreme urgency combined with a request to not tell anyone else','Slight audio artifacts, odd pauses, or a flat emotional tone','Call insists on UPI/transfer instead of any other verification'],
+    doList:['Hang up and call the person back on their known number','Agree on a family "safe word" for real emergencies'],
+    dontList:['Never transfer money based on a voice call alone during a claimed emergency','Never trust a video "endorsement" for investment without independent verification'],
+    case:'A parent received a call in their son\'s cloned voice claiming he\'d been arrested and needed urgent bail money — a five-second video from months earlier was enough to train the clone.'},
+];
+
+const SCENARIOS = [
+  { id:1, title:'The "blocked account" text', setup:'You get an SMS: "Your bank account will be suspended in 2 hours. Verify now: bank-secure-update.info". You are about to leave for class in 10 minutes.',
+    choices:[
+      {text:'Click the link quickly and enter your details before you leave', outcome:'bad', explain:'The link is not your bank\'s real domain. Entering details here hands your login straight to the scammer — urgency is the trick, not a real deadline.'},
+      {text:'Ignore the link, and separately open your bank\'s app to check your account status', outcome:'good', explain:'Exactly right. Real bank issues show up when you go to the bank directly — never through a link a message gave you.'},
+      {text:'Forward the SMS to a friend and ask if it looks real', outcome:'neutral', explain:'Better than clicking, but don\'t wait on a friend\'s reply — go straight to your bank\'s official app or number.'}]},
+  { id:2, title:'The recruiter on WhatsApp', setup:'A recruiter messages you on WhatsApp offering ₹2,500/day for "data entry", no interview needed, and asks for a ₹499 "registration fee" to send you the starter kit.',
+    choices:[
+      {text:'Pay the ₹499 — it\'s a small amount for a good opportunity', outcome:'bad', explain:'Legitimate employers never charge you to be hired. A small fee is often a trust-building step before larger demands.'},
+      {text:'Ask for an official offer letter from a verifiable company email first', outcome:'good', explain:'Good instinct. A real company can produce this immediately; a scam recruiter usually can\'t or won\'t.'},
+      {text:'Block and ignore, without checking anything further', outcome:'neutral', explain:'Safe, but reporting the number/profile helps prevent the next person from being targeted.'}]},
+  { id:3, title:'The "emergency" voice call', setup:'You get a call in what sounds exactly like your brother\'s voice: "I\'m in trouble, I need ₹20,000 right now, don\'t tell mom and dad, send it to this UPI ID."',
+    choices:[
+      {text:'Send the money immediately since it sounds exactly like him', outcome:'bad', explain:'Voice cloning from a few seconds of public audio is now trivial. "Don\'t tell anyone" is a classic isolation tactic used in real emergencies and scams alike.'},
+      {text:'Hang up and call your brother back on his saved number', outcome:'good', explain:'This single step defeats almost every voice-clone scam. If he doesn\'t answer, try another family member before sending anything.'},
+      {text:'Ask the caller a question only your real brother would know', outcome:'neutral', explain:'Can help, but a scammer with enough research might answer some questions too — calling back on a known number is more reliable.'}]},
+  { id:4, title:'The investment group "opportunity"', setup:'A friend adds you to a Telegram group where an "advisor" shows daily 5% guaranteed returns and encourages everyone to invest before a "limited slot" closes tonight.',
+    choices:[
+      {text:'Invest a small amount to test it, since your friend is already in', outcome:'bad', explain:'"Small test" amounts are exactly how these schemes build trust before larger losses. Guaranteed daily returns don\'t exist in real markets.'},
+      {text:'Check if the advisor/platform is SEBI-registered before doing anything', outcome:'good', explain:'Correct. Unregistered advisors promising guaranteed returns are a major red flag on their own, regardless of who invited you.'},
+      {text:'Leave the group immediately without saying anything', outcome:'neutral', explain:'Safe for you, but consider warning your friend — they may be at risk too.'}]},
+  { id:5, title:'The QR code "refund"', setup:'A buyer on an online marketplace says they\'ve accidentally sent you extra money and asks you to scan a QR code to "return" the difference.',
+    choices:[
+      {text:'Scan the QR code to send back the extra amount', outcome:'bad', explain:'Scanning a QR code and entering your PIN is how you pay — not how you receive a refund. This is a classic reversed-refund scam.'},
+      {text:'Check your actual bank statement for the claimed extra payment first', outcome:'good', explain:'Right approach. If no such payment exists in your account, there\'s nothing to refund — end the conversation.'},
+      {text:'Ask the buyer to just send the refund request through the marketplace instead', outcome:'good', explain:'Also a solid response — refunds should go through the platform\'s own system, not a personal QR code.'}]},
+];
+
+const QUIZ = [
+  {q:'Your bank sends an SMS asking you to "verify" your account by entering your UPI PIN. What should you do?', opts:['Enter the PIN as requested since it\'s from the bank','Never share your PIN — banks never ask for it via SMS','Reply to the SMS asking if it\'s genuine'], correct:1, cat:'upi', explain:'Banks never ask you to enter your PIN/OTP to "verify" an account. A PIN is only used to authorise a payment you are making.'},
+  {q:'A recruiter offers you a job and asks for a "registration fee" before onboarding. This is:', opts:['Normal — many companies charge onboarding fees','A major red flag — legitimate jobs don\'t require payment to be hired','Fine only if the amount is small'], correct:1, cat:'job', explain:'No legitimate employer asks a candidate to pay to be hired. This is one of the clearest indicators of a job scam.'},
+  {q:'You receive a call in a voice that sounds exactly like a family member asking for urgent money. Best first step?', opts:['Send the money immediately, it\'s an emergency','Hang up and call them back on their known number','Ask them to send a selfie for proof'], correct:1, cat:'ai', explain:'AI voice cloning can convincingly mimic a real voice. Calling back on a number you already trust is the most reliable check.'},
+  {q:'An "advisor" promises a guaranteed 5% daily return on crypto investment. This claim is:', opts:['Realistic for a skilled trader','A hallmark of an investment scam — no legitimate investment guarantees fixed daily returns','Only risky above ₹1,00,000'], correct:1, cat:'investment', explain:'Guaranteed fixed returns, especially daily ones, do not exist in legitimate markets and are a defining feature of Ponzi-style scams.'},
+  {q:'What is the safest way to check if a suspicious bank SMS is genuine?', opts:['Click the link in the SMS to check','Call the bank\'s official number from their website or the back of your card','Reply "STOP" to the SMS'], correct:1, cat:'upi', explain:'Always go to the bank independently — through their app or a number you already trust — rather than through anything the message itself provides.'},
+  {q:'Someone you matched with online refuses every video call but asks for money for a "medical emergency." This pattern is:', opts:['Understandable — video calls can be inconvenient','A classic romance scam pattern','Normal for long-distance relationships'], correct:1, cat:'social', explain:'Avoiding all video verification while escalating urgent money requests is one of the most consistent romance-scam patterns.'},
+  {q:'Your SIM suddenly loses signal for several hours with no explanation. You should:', opts:['Wait a day to see if it comes back','Contact your telecom provider immediately — it could be a SIM-swap','Restart your phone and ignore it'], correct:1, cat:'otp', explain:'A sudden, unexplained loss of signal can indicate your number has been ported to a duplicate SIM, giving an attacker access to your OTPs.'},
+  {q:'A buyer says they overpaid you and asks you to scan a QR code to send back the difference. What actually happens if you scan it and enter your PIN?', opts:['You receive the refund','You send money out — scanning + PIN is always a payment action, never a way to receive money','Nothing happens without further steps'], correct:1, cat:'upi', explain:'A QR code + PIN combination is always used to pay, never to receive. This is a very common reversed-refund scam.'},
+  {q:'A message urges "act now, offer expires in 10 minutes." This urgency is usually meant to:', opts:['Reward fast responders','Prevent you from thinking carefully or verifying the claim','Test the message system'], correct:1, cat:'upi', explain:'Artificial urgency is a deliberate manipulation tactic used across almost every scam category to stop you from pausing to verify.'},
+  {q:'What is the single most useful habit for avoiding most scams in this quiz?', opts:['Never answering unknown calls','Independently verifying any urgent request through a channel you already trust, before acting','Using a different bank for each app'], correct:1, cat:'ai', explain:'Independent verification — calling back a known number, checking an official app, confirming through a separate channel — defeats nearly every scam pattern covered here.'},
+];
+
+const CHECKLIST_QS = [
+  {id:'urgency', text:'Does the message create urgency or a tight deadline?', w:2},
+  {id:'otp', text:'Does it ask you to share an OTP, PIN or password?', w:3},
+  {id:'link', text:'Does it contain a shortened or unfamiliar link?', w:2},
+  {id:'money', text:'Does it ask you to pay or scan a QR code to "receive" something?', w:3},
+  {id:'unknown', text:'Is it from an unknown number or unofficial-looking sender?', w:1},
+  {id:'toogood', text:'Does it promise a reward that feels too good to be true?', w:2},
+  {id:'personal', text:'Does it ask for personal/financial details directly?', w:2},
+  {id:'secrecy', text:'Does it ask you to keep it secret or act alone?', w:2},
+];
+
+const BADGES = [
+  {id:'detector', name:'Detector Pro', desc:'Ran the scam detector at least once', icon:'🔎'},
+  {id:'scenario', name:'Scenario Survivor', desc:'Completed every "What Would You Do?" scenario', icon:'🧭'},
+  {id:'quizpass', name:'Quiz Rookie', desc:'Scored at least 6/10 on the quiz', icon:'📝'},
+  {id:'quizmaster', name:'Quiz Master', desc:'Scored a perfect 10/10 on the quiz', icon:'🏆'},
+  {id:'learn', name:'Well Read', desc:'Opened all six scam category case files', icon:'📚'},
+  {id:'toolkit', name:'Fully Prepared', desc:'Viewed the full safety toolkit', icon:'🛡️'},
+  {id:'selfaudit', name:'Self-Audited', desc:'Completed the full personal cyber safety checklist', icon:'✅'},
+  {id:'vishing', name:'Ear for Scams', desc:'Listened to a simulated vishing call', icon:'📞'},
+];
+
+const PERSONAL_CHECKLIST = [
+  {id:'p1', text:'I use a different password for banking apps than for other websites'},
+  {id:'p2', text:'I have 2-factor authentication (2FA) turned on for my email and banking apps'},
+  {id:'p3', text:'I never share my OTP, PIN or CVV with anyone, including "bank staff"'},
+  {id:'p4', text:'I check the sender\'s actual number/email, not just the display name'},
+  {id:'p5', text:'I verify urgent requests independently before clicking any link'},
+  {id:'p6', text:'I know my bank\'s official app/number and use only that to check issues'},
+  {id:'p7', text:'I avoid saving card details on unfamiliar or unofficial websites'},
+  {id:'p8', text:'I know how to report a scam (1930 / cybercrime.gov.in)'},
+  {id:'p9', text:'I pause and verify before acting on any "act now" or "expires soon" message'},
+  {id:'p10', text:'I\'ve talked to family members about voice-clone/AI scam risks'},
+];
+
+const GLOSSARY = [
+  {term:'Phishing', def:'A fake message or website designed to trick you into revealing personal or financial information.'},
+  {term:'Vishing', def:'Phishing carried out over a phone call rather than a message.'},
+  {term:'Smishing', def:'Phishing carried out over SMS text messages.'},
+  {term:'OTP', def:'One-Time Password — a short code used to authorise a single action; never meant to be shared.'},
+  {term:'UPI', def:'Unified Payments Interface — India\'s instant bank-to-bank payment system used by apps like GPay and PhonePe.'},
+  {term:'SIM-swap', def:'A scam where an attacker gets your number moved to a SIM they control, letting them intercept your OTPs.'},
+  {term:'Deepfake', def:'AI-generated audio or video made to convincingly imitate a real person\'s voice or face.'},
+  {term:'Social engineering', def:'Manipulating someone psychologically (urgency, trust, fear) rather than hacking a system.'},
+  {term:'2FA', def:'Two-Factor Authentication — a second proof of identity beyond a password, such as a code or app approval.'},
+  {term:'Spoofing', def:'Disguising a call, message or website to make it look like it\'s from someone trustworthy.'},
+  {term:'Ponzi scheme', def:'An investment scam that pays early participants with money from later ones, not real profit.'},
+  {term:'Malware', def:'Malicious software installed without consent, often used to steal data or spy on a device.'},
+];
+
+const VISHING_SCENARIOS = [
+  {id:'bank', title:'"Bank Security" OTP call',
+    script:'Good afternoon, this is Priya calling from your bank\'s security department. We have detected a suspicious transaction of 45,000 rupees on your account just now. To cancel this transaction immediately, I need you to read out the OTP that you have just received on your registered mobile number. Please hurry, this window closes in two minutes.',
+    flags:['Claims to be bank security staff calling directly', 'Creates immediate urgency ("closes in two minutes")', 'Asks you to read out an OTP over the phone', 'A real bank can reverse or block a transaction without your OTP']},
+  {id:'telecom', title:'"SIM Deactivation" call',
+    script:'Hello, this is a call from your telecom service provider. Your SIM card KYC has expired and your number will be deactivated within 24 hours. To keep your number active, please press 1 now, and then confirm the 6-digit verification code that will appear on your screen.',
+    flags:['Threatens deactivation to create panic', 'Asks you to act immediately ("within 24 hours")', 'Asks you to confirm a verification code — this code usually authorises a SIM transfer', 'Real KYC updates are done in person or through the operator\'s official app, not a random inbound call']},
+  {id:'techsupport', title:'"Tech Support" virus alert call',
+    script:'Sir, we are calling from the technical department. Our system shows that your computer has been sending virus alerts for the last two days. Your files and bank details may be at risk. To fix this remotely, we need you to install a remote access application and make a one-time payment of 2,999 rupees for the security fix.',
+    flags:['No legitimate company monitors your personal computer and calls you about it', 'Asks you to install remote-access software — this gives a stranger full control of your device', 'Demands an immediate payment to "fix" a problem you never reported', 'Combines fear (viruses, bank details at risk) with a manufactured solution']},
+  {id:'aivoice', title:'AI voice-clone "emergency" call',
+    script:'Mom, listen, I\'m in trouble, I got into an accident and I need money right now for the hospital. Please don\'t call dad, just send twenty thousand rupees to this UPI ID I\'m sending you, I\'ll explain everything later, please hurry, I don\'t have much battery left.',
+    flags:['Extreme urgency with no time to verify', 'Explicitly asks you to keep it secret from another family member', 'Pushes a UPI transfer to an unfamiliar ID instead of any other help', 'A voice can now be cloned from a few seconds of public audio or video']},
+];
+
+const EMERGENCY_SITUATIONS = [
+  {id:'otp', label:'I shared my OTP',
+    steps:['Call your bank\'s official fraud helpline right now — before anything else.', 'Ask them to block the transaction and freeze the card/UPI handle if a payment hasn\'t cleared yet.', 'Call 1930 immediately — the "golden hour" window matters most for OTP-based fraud.', 'File a complaint at cybercrime.gov.in with the time you shared it and any transaction details.']},
+  {id:'pin', label:'I shared my PIN/password',
+    steps:['Change that password immediately on any account where you reuse it.', 'Call your bank to block the card/account and flag possible fraud.', 'Enable 2FA wherever it isn\'t already on.', 'Report at cybercrime.gov.in and call 1930 if any money has moved.']},
+  {id:'link', label:'I clicked a suspicious link',
+    steps:['Don\'t enter any details if a page opened asking for them — close the tab.', 'Run a security scan if you\'re on a computer.', 'Change passwords for accounts you\'re worried about, especially if you entered anything.', 'Watch your bank/UPI app for unexpected activity over the next few days.']},
+  {id:'app', label:'I installed an unknown app',
+    steps:['Uninstall the app immediately.', 'Turn off mobile data/Wi-Fi first if you suspect it\'s actively transmitting data.', 'Change your important passwords from a different, trusted device.', 'Consider a factory reset if it was a remote-access tool and you\'re unsure what it accessed.']},
+  {id:'transfer', label:'I transferred money',
+    steps:['Call 1930 immediately — this is the single most time-sensitive step for stopping a transfer.', 'Also call your bank\'s fraud helpline in parallel, not instead of 1930.', 'File a complaint at cybercrime.gov.in with the transaction ID/UTR number.', 'Save every screenshot of the transaction and the conversation that led to it.']},
+  {id:'access', label:'Someone has access to my account',
+    steps:['Change the password immediately from a device you trust.', 'Log out of all other sessions/devices in the account\'s security settings.', 'Enable 2FA if it isn\'t already active.', 'Check for any changed recovery email/phone number and revert it.']},
+  {id:'social', label:'My social media account was hacked',
+    steps:['Use the platform\'s official "my account is compromised" recovery flow.', 'Alert friends/followers not to trust messages from the account until it\'s recovered.', 'Change the password and enable 2FA the moment you regain access.', 'Report the incident on the platform — most have a direct hacked-account report path.']},
+  {id:'personalinfo', label:'I gave someone my personal information',
+    steps:['Note exactly what you shared (ID number, address, etc.).', 'Watch your bank statements and credit report for unusual activity.', 'If it included Aadhaar/PAN, consider flagging it with the relevant authority.', 'Report at cybercrime.gov.in, especially if it was tied to a payment request.']},
+  {id:'fakebank', label:'A fake bank/support person contacted me',
+    steps:['Do not call back any number they gave you — use your bank\'s number from their real website/app.', 'Note the number/ID they used to contact you.', 'Report the number at cybercrime.gov.in.', 'Warn family members who might be targeted the same way.']},
+  {id:'jobinvest', label:'I may be targeted by a job/investment scam',
+    steps:['Stop any further payments immediately, even "small" ones.', 'Do not send any more money to "unlock" a task, bonus or withdrawal.', 'Save every chat message and payment proof as evidence.', 'Report at cybercrime.gov.in — job and investment scams are explicitly covered there.']},
+];
+
+const MANIPULATION_TACTICS = [
+  {name:'Urgency', scenario:'"Your account will be blocked in 30 minutes."', why:'Panic shuts down careful thinking — you act on instinct instead of checking.', resist:'Any real deadline survives a 5-minute pause to verify independently.'},
+  {name:'Fear', scenario:'"There is a warrant for your arrest unless you pay this fine now."', why:'Fear triggers a fight-or-flight response that overrides normal scepticism.', resist:'Government agencies do not threaten arrest over a phone call or SMS.'},
+  {name:'Authority', scenario:'"This is the bank\'s security department calling."', why:'We\'re trained to comply with authority figures without questioning them.', resist:'Anyone can claim a title. Verify by calling the organisation back on a number you already have.'},
+  {name:'Greed', scenario:'"Invest ₹10,000 today, get guaranteed ₹15,000 next week."', why:'The promise of easy, fast money overrides normal risk assessment.', resist:'If a return sounds too good to be true for the risk involved, it is.'},
+  {name:'Curiosity', scenario:'"Someone has posted embarrassing photos of you — click to see."', why:'Curiosity is hard to resist, even when something feels off.', resist:'Suspicious "you have to see this" messages are almost always bait — don\'t click.'},
+  {name:'Social pressure', scenario:'"All your friends have already joined this investment group."', why:'We look to others\' behaviour to decide what\'s safe — even when we can\'t verify it.', resist:'Other people falling for something doesn\'t make it real. Verify independently, always.'},
+  {name:'Trust', scenario:'A cloned voice of a family member asking for urgent help.', why:'We\'re wired to trust people we recognise, especially family, more than any warning sign.', resist:'Hang up and call back on a number you already have saved — every time, no exceptions.'},
+  {name:'Scarcity', scenario:'"Only 2 slots left — offer expires in 10 minutes."', why:'Perceived scarcity makes an opportunity feel too valuable to lose, rushing the decision.', resist:'Real opportunities don\'t vanish in 10 minutes. Scarcity language is a manufactured pressure tactic.'},
+];
+
+const state = {
+  load(){
+    try{
+      const s = JSON.parse(localStorage.getItem('shieldwise_state'));
+      return Object.assign({badges:[], learnedCats:[], quizAttempts:[], scenariosDone:[], personalChecklist:{}, certName:'', familyCard:{}}, s || {});
+    }catch(e){ return {badges:[], learnedCats:[], quizAttempts:[], scenariosDone:[], personalChecklist:{}, certName:'', familyCard:{}}; }
+  },
+  save(s){ localStorage.setItem('shieldwise_state', JSON.stringify(s)); },
+};
+let appState = state.load();
+
+function unlockBadge(id){
+  if(!appState.badges.includes(id)){
+    appState.badges.push(id);
+    state.save(appState);
+    renderBadgeCount();
+    renderBadges();
+    const b = BADGES.find(x => x.id === id);
+    if(b) showToast(`Badge unlocked: ${b.name}`, b.icon);
+  }
+}
+function renderBadgeCount(){
+  const txt = appState.badges.length + '/' + BADGES.length;
+  document.getElementById('badgeCount').textContent = txt;
+  document.getElementById('badgeCountMobile').textContent = txt;
+}
+function getProgressStats(){
+  const bestQuiz = appState.quizAttempts.length ? Math.max(...appState.quizAttempts.map(a => a.score)) : 0;
+  const checklistChecked = PERSONAL_CHECKLIST.filter(i => appState.personalChecklist[i.id]).length;
+  return {
+    catsRead: appState.learnedCats.length, catsMax: CATEGORIES.length,
+    scenarios: appState.scenariosDone.length, scenariosMax: SCENARIOS.length,
+    bestQuiz, quizMax: QUIZ.length,
+    checklistChecked, checklistMax: PERSONAL_CHECKLIST.length,
+  };
+}
+function isCertificateEligible(s){
+  return s.catsRead === s.catsMax && s.scenarios === s.scenariosMax && s.bestQuiz >= 7 && s.checklistChecked === s.checklistMax;
+}
+function renderDashboard(){
+  const box = document.getElementById('dashboardStats');
+  if(!box) return;
+  const s = getProgressStats();
+  const rows = [
+    {label:'Categories read', value: s.catsRead, max: s.catsMax},
+    {label:'Scenarios completed', value: s.scenarios, max: s.scenariosMax},
+    {label:'Best quiz score', value: s.bestQuiz, max: s.quizMax},
+    {label:'Personal checklist', value: s.checklistChecked, max: s.checklistMax},
+  ];
+  box.innerHTML = rows.map(r => {
+    const pct = r.max ? Math.round((r.value/r.max)*100) : 0;
+    return `<div class="border border-line rounded-xl p-5 bg-paper-100">
+      <div class="flex items-center justify-between text-sm mb-2"><span class="font-medium">${r.label}</span><span class="text-ink-700/60">${r.value}/${r.max}</span></div>
+      <div class="risk-meter"><div class="risk-fill" style="width:${pct}%;background:#0E7C7B"></div></div>
+    </div>`;
+  }).join('');
+  if(typeof surveyAverages !== 'undefined' && surveyAverages && s.quizMax){
+    const yourPct = Math.round((s.bestQuiz / s.quizMax) * 100);
+    const diff = yourPct - surveyAverages.knowAfter;
+    const compareText = s.bestQuiz > 0
+      ? `Your best quiz score is ${yourPct}% — the live survey average knowledge-check accuracy is ${surveyAverages.knowAfter}%. You're ${diff >= 0 ? diff + ' points above' : Math.abs(diff) + ' points below'} the group average.`
+      : `The live survey average knowledge-check accuracy is ${surveyAverages.knowAfter}% — take the quiz to see how you compare.`;
+    box.insertAdjacentHTML('beforeend', `<div class="sm:col-span-2 border border-line rounded-xl p-5 bg-paper-200/50">
+      <div class="text-sm font-medium mb-1">How you compare</div>
+      <p class="text-sm text-ink-700/70">${compareText}</p>
+    </div>`);
+  }
+  renderCertificateCard(s);
+}
+function renderCertificateCard(s){
+  const box = document.getElementById('certificateCard');
+  if(!box) return;
+  const stats = s || getProgressStats();
+  if(isCertificateEligible(stats)){
+    box.innerHTML = `<div class="border border-line rounded-2xl p-6 bg-ink text-white">
+      <p class="text-xs font-medium text-trust uppercase tracking-wide">Program complete</p>
+      <h3 class="font-display text-lg font-semibold mt-1">You've earned a certificate of completion</h3>
+      <div class="flex flex-wrap gap-3 mt-4 items-center">
+        <input id="certNameInput" type="text" placeholder="Your name (optional)" value="${(appState.certName||'').replace(/"/g,'&quot;')}" class="border border-white/20 bg-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-trust w-56">
+        <button id="viewCertificateBtn" class="bg-white text-ink px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-trust hover:text-white transition-colors">View / print certificate</button>
+      </div>
+    </div>`;
+    document.getElementById('certNameInput').addEventListener('input', (e) => {
+      appState.certName = e.target.value; state.save(appState);
+    });
+    document.getElementById('viewCertificateBtn').addEventListener('click', () => { location.hash = '#certificate'; });
+  } else {
+    const items = [
+      {label:'Read all scam categories', done: stats.catsRead === stats.catsMax, detail: `${stats.catsRead}/${stats.catsMax}`},
+      {label:'Complete all scenarios', done: stats.scenarios === stats.scenariosMax, detail: `${stats.scenarios}/${stats.scenariosMax}`},
+      {label:'Score at least 7/10 on the quiz', done: stats.bestQuiz >= 7, detail: `${stats.bestQuiz}/${stats.quizMax}`},
+      {label:'Complete the personal checklist', done: stats.checklistChecked === stats.checklistMax, detail: `${stats.checklistChecked}/${stats.checklistMax}`},
+    ];
+    box.innerHTML = `<div class="border border-line rounded-2xl p-6 bg-paper-100">
+      <h3 class="font-display font-semibold">Complete the program to unlock your certificate</h3>
+      <ul class="mt-3 space-y-2 text-sm">
+        ${items.map(i => `<li class="flex items-center justify-between"><span class="${i.done?'text-trust':'text-ink-700/70'}">${i.done?'✓':'○'} ${i.label}</span><span class="text-ink-700/50">${i.detail}</span></li>`).join('')}
+      </ul>
+    </div>`;
+  }
+}
+function renderCertificateSheet(){
+  document.getElementById('certName').textContent = appState.certName && appState.certName.trim() ? appState.certName.trim() : 'Participant';
+  document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('certId').textContent = 'CERT-' + Date.now().toString(36).toUpperCase().slice(-8);
+}
+function renderBadges(){
+  const grid = document.getElementById('badgeGrid');
+  grid.innerHTML = BADGES.map(b => {
+    const unlocked = appState.badges.includes(b.id);
+    return `<div class="reveal lift border border-line rounded-2xl p-6 bg-paper-100 ${unlocked?'':'badge-locked'}">
+      <div class="text-3xl">${b.icon}</div>
+      <h3 class="font-display font-semibold mt-3">${b.name}</h3>
+      <p class="text-sm text-ink-700/70 mt-1">${b.desc}</p>
+      <p class="text-xs mt-3 font-medium ${unlocked?'text-trust':'text-ink-700/40'}">${unlocked?'Unlocked':'Locked'}</p>
+    </div>`;
+  }).join('');
+}
+
+/* =================== A11Y / MOTION HELPER =================== */
+function prefersReducedMotion(){
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/* =================== TOASTS =================== */
+function showToast(message, icon){
+  const container = document.getElementById('toastContainer');
+  if(!container) return;
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.setAttribute('role','status');
+  el.innerHTML = `<span class="toast-icon">${icon||'✓'}</span><span>${message}</span>`;
+  container.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  }, 3800);
+}
+
+/* =================== ROUTER =================== */
+const views = document.querySelectorAll('.view');
+function showView(name){
+  views.forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.getAttribute('data-nav') === name));
+  document.getElementById('mobileNav').classList.add('hidden');
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  const active = document.querySelector('.view.active');
+  if(active && !prefersReducedMotion()){
+    active.classList.add('page-enter');
+    active.classList.remove('page-enter-active');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      active.classList.add('page-enter-active');
+      setTimeout(() => active.classList.remove('page-enter','page-enter-active'), 320);
+    }));
+  }
+  runReveal();
+  if(name === 'toolkit') unlockBadge('toolkit');
+  if(name === 'progress') renderDashboard();
+  if(name === 'certificate') renderCertificateSheet();
+}
+function route(){
+  const hash = (location.hash || '#home').replace('#','');
+  const known = ['home','learn','detector','scenarios','quiz','toolkit','report','cep','survey','analytics','progress','about','certificate','familycard'];
+  showView(known.includes(hash) ? hash : 'home');
+}
+window.addEventListener('hashchange', route);
+
+/* nav toggle (mobile) */
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('mobileNav').classList.toggle('hidden');
+});
+
+/* =================== HEADER SCROLL STATE + BACK TO TOP =================== */
+const mainHeader = document.getElementById('mainHeader');
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 12;
+  if(mainHeader) mainHeader.classList.toggle('is-scrolled', scrolled);
+  if(backToTop) backToTop.classList.toggle('show', window.scrollY > 480);
+}, {passive:true});
+if(backToTop){
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({top:0, behavior: prefersReducedMotion() ? 'auto' : 'smooth'});
+  });
+}
+
+/* =================== REVEAL ANIMATION =================== */
+function runReveal(){
+  const active = document.querySelector('.view.active');
+  if(!active) return;
+  const els = active.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:0.1});
+  els.forEach((el,i) => { el.style.transitionDelay = (i*60)+'ms'; io.observe(el); });
+}
+
+/* =================== HOME: counters + scanline =================== */
+function animateCounters(){
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.getAttribute('data-count'), 10);
+    gsap.fromTo(el, {textContent:0}, {
+      textContent:target, duration:1.4, ease:'power2.out', snap:{textContent:1},
+      onUpdate(){ el.textContent = Math.round(this.targets()[0].textContent); }
+    });
+  });
+}
+function initHeroNetwork(){
+  const canvas = document.getElementById('heroCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const parent = canvas.parentElement;
+  let w, h, nodes, raf;
+  const reduced = prefersReducedMotion();
+  const COUNT = 16;
+
+  function size(){
+    w = canvas.width = parent.offsetWidth;
+    h = canvas.height = parent.offsetHeight;
+  }
+  function makeNodes(){
+    nodes = Array.from({length:COUNT}, () => ({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle = 'rgba(14,124,123,0.35)';
+    ctx.lineWidth = 1;
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 110){
+          ctx.globalAlpha = 1 - dist/110;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(14,124,123,0.75)';
+    nodes.forEach(n => { ctx.beginPath(); ctx.arc(n.x,n.y,1.8,0,Math.PI*2); ctx.fill(); });
+  }
+  function step(){
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if(n.x < 0 || n.x > w) n.vx *= -1;
+      if(n.y < 0 || n.y > h) n.vy *= -1;
+    });
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  size(); makeNodes(); draw();
+  if(!reduced){ raf = requestAnimationFrame(step); }
+  window.addEventListener('resize', () => { size(); }, {passive:true});
+}
+function runScanline(){
+  const box = document.querySelector('#view-home .relative.bg-ink');
+  if(!box) return;
+  const h = box.querySelector('.bg-ink-800').offsetHeight;
+  gsap.timeline({repeat:0})
+    .set('#scanline', {top:0})
+    .to('#scanline', {top:h, duration:1.6, ease:'power1.inOut'})
+    .call(() => {
+      document.querySelectorAll('#view-home .scan-target').forEach((el,i) => {
+        gsap.fromTo(el, {opacity:0.3}, {opacity:1, duration:.3, delay:i*.15});
+      });
+      gsap.to('#scanVerdict', {opacity:1, duration:.4});
+    });
+}
+
+/* =================== LEARN =================== */
+function renderLedger(){
+  const ledger = document.getElementById('categoryLedger');
+  ledger.innerHTML = CATEGORIES.map((c,i) => `
+    <button data-open-cat="${c.id}" class="ledger-row w-full text-left flex items-center gap-4 px-5 py-4 hover:bg-paper-200 transition-colors">
+      <span class="case-number w-10 shrink-0">C-0${i+1}</span>
+      <span class="text-xl">${c.icon}</span>
+      <span class="flex-1">
+        <span class="font-medium block">${c.name}</span>
+        <span class="text-sm text-ink-700/60">${c.summary}</span>
+      </span>
+      <span class="text-ink-700/40">→</span>
+    </button>`).join('');
+  ledger.querySelectorAll('[data-open-cat]').forEach(btn => {
+    btn.addEventListener('click', () => openCategory(btn.getAttribute('data-open-cat')));
+  });
+}
+function openCategory(id){
+  const c = CATEGORIES.find(x => x.id === id);
+  if(!c) return;
+  if(!appState.learnedCats.includes(id)){ appState.learnedCats.push(id); state.save(appState); }
+  if(appState.learnedCats.length >= CATEGORIES.length) unlockBadge('learn');
+
+  document.getElementById('categoryDetail').innerHTML = `
+    <div class="border border-line rounded-2xl p-6 sm:p-8 bg-paper-100">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">${c.icon}</span>
+        <h2 class="font-display text-2xl font-semibold">${c.name}</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 mt-6">
+        <div>
+          <h3 class="font-medium">How it works</h3>
+          <ol class="mt-2 space-y-2 text-sm text-ink-700/70">${c.how.map((s,i)=>`<li class="flex gap-2"><span class="font-mono text-trust text-xs mt-0.5">${i+1}</span><span>${s}</span></li>`).join('')}</ol>
+          <h3 class="font-medium mt-6">Real case example</h3>
+          <p class="text-sm text-ink-700/70 mt-2 italic">"${c.case}"</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-signal">Red flags</h3>
+          <ul class="mt-2 space-y-1.5 text-sm text-ink-700/70">${c.flags.map(f=>`<li>• ${f}</li>`).join('')}</ul>
+          <div class="grid grid-cols-2 gap-4 mt-6">
+            <div><h4 class="text-sm font-medium text-trust">Do</h4><ul class="text-sm text-ink-700/70 mt-1.5 space-y-1">${c.doList.map(d=>`<li>✓ ${d}</li>`).join('')}</ul></div>
+            <div><h4 class="text-sm font-medium text-signal">Don't</h4><ul class="text-sm text-ink-700/70 mt-1.5 space-y-1">${c.dontList.map(d=>`<li>✕ ${d}</li>`).join('')}</ul></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('categoryDetail').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* =================== DETECTOR: message signal engine =================== */
+/* Each signal requires the RELEVANT CONTEXT (a verb near "OTP", a threat near "account"),
+   not just a bare keyword — a legitimate "Your OTP is 4521" message should NOT flag the
+   OTP signal, only a message that asks you to *share/confirm* an OTP should. Weight reflects
+   how strongly that specific pattern correlates with real fraud, not just presence. */
+const SIGNALS = [
+  {id:'urgency', re:/\b(within \d+\s?(minutes?|hours?|hrs?)|expires?\s?(today|soon|shortly|in \d+)|act now|last chance|final (warning|notice))\b/i,
+    label:'Urgency / artificial deadline', weight:12, type:['phishing'],
+    action:'Slow down — a real deadline from a bank or company is never this tight over a text message.'},
+  {id:'threat_suspend', re:/\b(account (will be|has been|is going to be)\s?(blocked|suspended|deactivated|locked|frozen))\b/i,
+    label:'Threat of account suspension', weight:16, type:['banking_kyc'],
+    action:'Do not act on this alone — log in through your bank\'s official app to check your real account status.'},
+  {id:'otp_request', re:/(share|send|tell|provide|confirm|give|read out)[^.!?]{0,20}\b(otp|one[- ]time password)\b/i,
+    not:/\b(do ?n[o']?t|never|do not|should not|won'?t)[^.!?]{0,15}(share|send|tell|provide|confirm|give|read out)/i,
+    label:'Asks you to share or confirm an OTP', weight:28, type:['otp'],
+    action:'Never share an OTP with anyone. It authorises an action — banks never need it read back to you.'},
+  {id:'pin_request', re:/(share|send|tell|provide|confirm|give|enter)[^.!?]{0,20}\b(pin|cvv|atm pin|password)\b/i,
+    not:/\b(do ?n[o']?t|never|do not|should not|won'?t)[^.!?]{0,15}(share|send|tell|provide|confirm|give|enter)/i,
+    label:'Asks you to share a PIN, password or CVV', weight:28, type:['banking_kyc','otp'],
+    action:'Never share your PIN, password or CVV — no legitimate service asks for these over a message or call.'},
+  {id:'kyc', re:/\bkyc\b[^.!?]{0,25}(update|expire|pending|incomplete|verify|re-?verif)/i,
+    label:'"KYC update" pressure', weight:14, type:['banking_kyc'],
+    action:'KYC updates are done in person or through your bank/telecom\'s own app — never through a link in a message.'},
+  {id:'govt_impersonation', re:/\b(income tax department|cyber cell|trai|customs department|police (department|verification|notice)|court notice|arrest warrant)\b/i,
+    label:'Claims to be a government department', weight:16, type:['govt_impersonation'],
+    action:'Government departments do not threaten arrest or demand payment over SMS/WhatsApp. Verify via the department\'s official website.'},
+  {id:'payment_pressure', re:/(pay|transfer|send money|deposit)[^.!?]{0,25}(immediately|right now|urgently|to (this|the following)\s?(upi|account|number))/i,
+    label:'Pressures an urgent payment or transfer', weight:18, type:['upi_payment'],
+    action:'Never transfer money because a message insists it\'s urgent. Verify independently first.'},
+  {id:'prize', re:/\b(you\s?(have)?\s?won|lucky draw|lottery|jackpot|selected (as )?(a )?winner|claim your prize)\b/i,
+    label:'Unrealistic prize or lottery claim', weight:14, type:['lottery'],
+    action:'You cannot win a lottery you never entered. Treat any unsolicited prize claim as false.'},
+  {id:'fake_refund', re:/\b(refund (initiated|pending|failed|available))\b[^.!?]{0,25}(scan|qr|click|link|claim)/i,
+    label:'Fake refund that requires an action to "claim"', weight:16, type:['upi_payment'],
+    action:'A real refund arrives automatically. Never scan a QR code or click a link to "receive" money.'},
+  {id:'job_fee', re:/\b(work from home|part[- ]time job|earn\s?(₹|rs\.?)?\s?\d+[^.!?]{0,15}(per day|daily|weekly))\b[\s\S]{0,70}(registration fee|security deposit|activation fee)/i,
+    label:'Job offer that requires an upfront fee', weight:18, type:['job'],
+    action:'No legitimate employer asks you to pay to be hired or to unlock a task.'},
+  {id:'investment_guarantee', re:/\b(guaranteed\s?(returns?|profit)|double your (money|investment)|risk[- ]free investment|assured\s?(returns?|profit))\b/i,
+    label:'"Guaranteed" investment returns', weight:18, type:['investment'],
+    action:'No legitimate investment guarantees fixed returns. Treat this as a red flag on its own.'},
+  {id:'remote_access', re:/\b(anydesk|teamviewer|quick support|screen\s?share|install[^.!?]{0,15}(this )?app)\b/i,
+    label:'Asks you to install remote-access software', weight:22, type:['remote_access'],
+    action:'Never install remote-access software for someone who contacted you first — it gives them full control of your device.'},
+  {id:'qr_receive', re:/\bscan[^.!?]{0,15}\bqr\b[^.!?]{0,25}(receive|refund|claim|cashback|prize)/i,
+    label:'"Scan this QR to receive money" trick', weight:20, type:['upi_payment'],
+    action:'Scanning a QR code and entering your PIN always sends money out — never receives it.'},
+  {id:'shortlink', re:/\b(bit\.ly|tinyurl\.com|t\.co\/|cutt\.ly|is\.gd|rebrand\.ly|rb\.gy|tiny\.cc|ow\.ly)\b/i,
+    label:'Shortened link hides the real destination', weight:12, type:['phishing'],
+    action:'Avoid clicking shortened links from unknown senders — the real destination is hidden.'},
+  {id:'susp_domain', re:/\b[a-z0-9-]+\.(tk|ml|ga|cf|gq|xyz|top|click|loan)\b/i,
+    label:'Domain uses an uncommon ending often seen in scam sites', weight:12, type:['phishing'],
+    action:'Type the organisation\'s address directly into your browser instead of using this link.'},
+  {id:'secrecy', re:/\b(don'?t tell|keep (this|it) (a )?secret|between (us|you and me)|do not inform|without telling)\b/i,
+    label:'Asks you to keep this secret from others', weight:16, type:['phishing'],
+    action:'A request for secrecy — especially from a "family member" — is a major red flag. Verify with someone else.'},
+  {id:'personal_info', re:/(share|send|provide|confirm)[^.!?]{0,20}(aadhaar|pan card|account number|card number|full (name and )?address)/i,
+    not:/\b(do ?n[o']?t|never|do not|should not|won'?t)[^.!?]{0,15}(share|send|provide|confirm)/i,
+    label:'Requests sensitive personal/financial details', weight:16, type:['phishing'],
+    action:'Never share ID or account numbers with someone who contacted you first.'},
+  {id:'delivery', re:/\b(courier|parcel|shipment|delivery)\b[^.!?]{0,25}(pending|failed|customs duty|held|pay)/i,
+    label:'Fake delivery/customs-fee demand', weight:12, type:['delivery'],
+    action:'Delivery companies don\'t ask for small "customs fees" via a text link. Check directly on the courier\'s official app.'},
+  {id:'loan', re:/\b(loan (approved|pre[- ]approved)|instant loan|no documents? (required|needed) loan)\b/i,
+    label:'Unsolicited pre-approved loan offer', weight:12, type:['loan'],
+    action:'Unsolicited "pre-approved" loans with no paperwork are a common scam pattern — verify with your actual bank.'},
+  {id:'support_impersonation', re:/\b(this is (customer|technical) (care|support)|calling from (the )?(technical|security) department)\b/i,
+    label:'Claims to be tech/customer support you didn\'t contact', weight:12, type:['support_impersonation'],
+    action:'You didn\'t contact them — hang up. Genuine support never cold-calls to "fix" a problem you never reported.'},
+];
+const SCAM_TYPE_NAMES = {
+  phishing:'Phishing', banking_kyc:'Banking/KYC scam', otp:'OTP scam', upi_payment:'UPI/Payment scam',
+  job:'Job scam', investment:'Investment scam', lottery:'Lottery/prize scam', govt_impersonation:'Government impersonation',
+  support_impersonation:'Customer-support impersonation', remote_access:'Remote-access scam', delivery:'Delivery scam', loan:'Loan scam',
+};
+function scanMessage(text){
+  const hits = SIGNALS.filter(s => s.re.test(text) && !(s.not && s.not.test(text)));
+  const score = Math.min(100, hits.reduce((sum, s) => sum + s.weight, 0));
+  const typeTally = {};
+  hits.forEach(s => s.type.forEach(t => { typeTally[t] = (typeTally[t]||0) + s.weight; }));
+  const likelyTypes = Object.entries(typeTally).sort((a,b) => b[1]-a[1]).slice(0,2).map(([t]) => SCAM_TYPE_NAMES[t]);
+  return {hits, score, likelyTypes};
+}
+
+const CATEGORY_KEYWORDS = {
+  upi: ['upi','bank account','account will be','sbi','hdfc','icici','pin','qr code','net banking'],
+  otp: ['otp','sim','kyc','verification code','telecom','deactivat'],
+  job: ['job','work from home','salary','per day','registration fee','recruiter','hiring','task'],
+  investment: ['invest','trading','return','profit','crypto','stock','guaranteed','advisor'],
+  social: ['relationship','dating','match','gift','customs','love','girlfriend','boyfriend'],
+  ai: ['voice','emergency','accident','hospital','clone','call','mom','dad','son','daughter'],
+};
+function classifyMessageCategory(text){
+  const t = text.toLowerCase();
+  let best = null, bestScore = 0;
+  CATEGORIES.forEach(c => {
+    const keywords = CATEGORY_KEYWORDS[c.id] || [];
+    const score = keywords.filter(k => t.includes(k)).length;
+    if(score > bestScore){ bestScore = score; best = c; }
+  });
+  return bestScore > 0 ? best : null;
+}
+
+document.getElementById('runScan').addEventListener('click', () => {
+  const text = document.getElementById('scanInput').value.trim();
+  const box = document.getElementById('scanResultBox');
+  if(!text){ box.innerHTML = '<p class="text-sm text-ink-700/60">Paste a message first.</p>'; return; }
+  const {hits, score, likelyTypes} = scanMessage(text);
+  const matchedCategory = classifyMessageCategory(text);
+  unlockBadge('detector');
+
+  let level = score >= 60
+    ? {label:'HIGH RISK', color:'#B4472A'}
+    : score >= 25
+      ? {label:'MEDIUM RISK', color:'#B8862E'}
+      : {label:'LOW RISK', color:'#0E7C7B'};
+
+  const actions = [...new Set(hits.map(h => h.action))];
+  if(!actions.length) actions.push('No strong signals were found, but if anything about this message still feels off, verify independently before acting.');
+  actions.push('Verify through the organisation\'s official app or a number you already trust — never through this message itself.');
+
+  box.innerHTML = `
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <span class="font-display font-semibold" style="color:${level.color}">${level.label}</span>
+      <span class="text-sm text-ink-700/60">Risk score: ${score}/100</span>
+    </div>
+    <div class="risk-meter mt-3"><div class="risk-fill" style="width:${score}%;background:${level.color}"></div></div>
+
+    ${likelyTypes.length ? `<p class="text-xs text-ink-700/50 mt-3">Closest pattern match: <span class="font-medium text-ink">${likelyTypes.join(' / ')}</span></p>` : ''}
+
+    <h4 class="text-sm font-medium mt-4">Why this was flagged</h4>
+    <ul class="mt-1.5 space-y-1.5 text-sm">
+      ${hits.length ? hits.map(h=>`<li class="flex gap-2 tick-in">🚩 <span>${h.label}</span></li>`).join('') : '<li class="text-ink-700/60">No strong red-flag patterns were detected by this rule-based check.</li>'}
+    </ul>
+
+    <h4 class="text-sm font-medium mt-4">What you should do</h4>
+    <ul class="mt-1.5 space-y-1.5 text-sm text-ink-700/80">
+      ${actions.map(a => `<li>✓ ${a}</li>`).join('')}
+    </ul>
+
+    <p class="text-xs text-ink-700/45 mt-4 border-t border-line pt-3">External reputation/threat-intelligence check unavailable in this browser-only tool — this is a local, rule-based analysis only. It cannot guarantee a message is genuinely fraudulent or genuinely safe; a low score does not mean "safe," it means no known patterns matched.</p>
+    ${matchedCategory ? `<button id="scanCatLink" data-cat-jump="${matchedCategory.id}" class="mt-3 text-sm text-trust underline">Read the full ${matchedCategory.name} case file →</button>` : ''}`;
+  if(matchedCategory){
+    document.getElementById('scanCatLink').addEventListener('click', () => {
+      location.hash = '#learn';
+      setTimeout(() => openCategory(matchedCategory.id), 60);
+    });
+  }
+});
+
+/* =================== DETECTOR: URL checker mode =================== */
+const SHORTENER_DOMAINS = /\b(bit\.ly|tinyurl\.com|t\.co|cutt\.ly|is\.gd|rebrand\.ly|shorte\.st|rb\.gy|tiny\.cc|ow\.ly)\b/i;
+const SUSPICIOUS_TLDS = /\.(tk|ml|ga|cf|gq|xyz|top|club|work|click|loan|info|live)(\/|$|\?)/i;
+const BRAND_KEYWORDS = ['sbi','hdfc','icici','paytm','paypal','google','amazon','whatsapp','instagram','facebook','netflix','microsoft','apple'];
+
+function scanUrl(raw){
+  const hits = [];
+  let urlObj = null;
+  let candidate = raw.trim();
+  if(!/^https?:\/\//i.test(candidate)) candidate = 'http://' + candidate;
+  try { urlObj = new URL(candidate); } catch(e){ /* leave null, fall back to string checks */ }
+
+  const host = urlObj ? urlObj.hostname : candidate;
+  const full = raw.trim();
+  const push = (label, weight, action) => hits.push({label, weight, action});
+
+  if(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host))
+    push('Uses a raw IP address instead of a domain name', 22, 'Legitimate organisations almost never link you to a bare IP address — treat this as a strong warning sign.');
+  if(SHORTENER_DOMAINS.test(full))
+    push('Uses a link-shortening service, which hides the real destination', 14, 'Avoid clicking shortened links from unknown senders — expand them first or avoid entirely.');
+  if(SUSPICIOUS_TLDS.test(full))
+    push('Uses an uncommon domain ending sometimes favoured for throwaway scam sites', 14, 'Type the organisation\'s address directly into your browser instead of using this link.');
+  if(full.includes('@') && /https?:\/\/[^\s]*@/i.test(full))
+    push('Contains an "@" before the real domain — everything before it is ignored by browsers, a classic redirect trick', 24, 'Never trust text before an "@" in a URL — the browser uses whatever comes after it as the real destination.');
+  if(host && host.split('-').length > 3)
+    push('Domain uses several hyphens, often used to mimic an official name', 10, 'Compare this domain letter-by-letter with the organisation\'s real website.');
+  if(host && host.split('.').length > 4)
+    push('Unusually many subdomains, often used to disguise the real domain', 12, 'Look at the part of the domain right before the final ".com/.in" — that\'s the real owner, not the words before it.');
+  if(/^https?:\/\//i.test(raw.trim()) && raw.trim().toLowerCase().startsWith('http://'))
+    push('Not using HTTPS — no encryption between you and the site', 10, 'Avoid entering any personal or payment details on a non-HTTPS page.');
+  if(/xn--/i.test(host))
+    push('Domain uses punycode, which can visually disguise look-alike characters', 20, 'Punycode can make a fake domain look identical to a real one — verify through an official link instead.');
+  if(full.length > 100)
+    push('Unusually long URL, which can hide the real destination in the middle of the string', 10, 'Long, cluttered URLs are often used to bury the real domain — check the start of the address carefully.');
+  if(urlObj && urlObj.port && !['80','443',''].includes(urlObj.port))
+    push(`Uses a non-standard port (${urlObj.port})`, 12, 'A legitimate customer-facing site rarely needs a custom port — treat this as unusual.');
+  const encodedMatches = full.match(/%[0-9a-f]{2}/gi);
+  if(encodedMatches && encodedMatches.length >= 3)
+    push('Heavily encoded URL (many "%XX" sequences), which can hide the real destination', 12, 'Heavy encoding is sometimes used to disguise a malicious link from a quick glance — verify independently.');
+  const brandHit = BRAND_KEYWORDS.find(b => host && host.toLowerCase().includes(b));
+  if(brandHit && !new RegExp(`^([a-z0-9-]+\\.)?${brandHit}\\.[a-z.]+$`,'i').test(host))
+    push(`Mentions "${brandHit}" in the domain but isn't that brand's actual official domain`, 22, `Go directly to ${brandHit}'s known official website instead of following this link.`);
+  if(/redirect=|url=|next=|dest=/i.test(full))
+    push('Contains a redirect parameter — the visible link may not be the final destination', 12, 'A redirect parameter means the page you land on may differ from what this link shows.');
+
+  const score = Math.min(100, hits.reduce((sum,h) => sum + h.weight, 0) + (host ? 0 : 15));
+  return {hits, score, host};
+}
+document.getElementById('runUrlScan').addEventListener('click', () => {
+  const raw = document.getElementById('urlInput').value.trim();
+  const box = document.getElementById('urlResultBox');
+  if(!raw){ box.innerHTML = '<p class="text-sm text-ink-700/60">Paste a link first.</p>'; return; }
+  const {hits, score, host} = scanUrl(raw);
+  unlockBadge('detector');
+  let level = score >= 60
+    ? {label:'HIGH RISK', color:'#B4472A'}
+    : score >= 25
+      ? {label:'MEDIUM RISK', color:'#B8862E'}
+      : {label:'LOW RISK', color:'#0E7C7B'};
+  const actions = [...new Set(hits.map(h => h.action))];
+  if(!actions.length) actions.push('No structural red flags were found, but this checks link patterns only — it does not confirm the site is safe.');
+  actions.push('When in doubt, navigate to the site by typing its known address directly rather than following this link.');
+  box.innerHTML = `
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <span class="font-display font-semibold" style="color:${level.color}">${level.label}</span>
+      <span class="text-sm text-ink-700/60">Risk score: ${score}/100</span>
+    </div>
+    <div class="risk-meter mt-3"><div class="risk-fill" style="width:${score}%;background:${level.color}"></div></div>
+    ${host ? `<p class="text-xs text-ink-700/50 mt-3 font-mono">Domain read as: ${host}</p>` : ''}
+    <h4 class="text-sm font-medium mt-4">Why this was flagged</h4>
+    <ul class="mt-1.5 space-y-1.5 text-sm">
+      ${hits.length ? hits.map(h=>`<li class="flex gap-2 tick-in">🚩 <span>${h.label}</span></li>`).join('') : '<li class="text-ink-700/60">No structural red flags were detected by this rule-based check.</li>'}
+    </ul>
+    <h4 class="text-sm font-medium mt-4">What you should do</h4>
+    <ul class="mt-1.5 space-y-1.5 text-sm text-ink-700/80">
+      ${actions.map(a => `<li>✓ ${a}</li>`).join('')}
+    </ul>
+    <p class="text-xs text-ink-700/45 mt-4 border-t border-line pt-3">External domain-reputation/threat-intelligence check unavailable in this browser-only tool — this looks only at the link's structure. It cannot confirm a site is genuinely malicious or genuinely safe.</p>`;
+});
+
+/* =================== DETECTOR: vishing (voice call) simulator =================== */
+let currentVishing = null;
+/* =================== REPORT: "what happened" emergency picker =================== */
+function renderEmergencyPicker(){
+  const box = document.getElementById('emergencyPicker');
+  if(!box) return;
+  box.innerHTML = EMERGENCY_SITUATIONS.map(s => `
+    <button data-emg="${s.id}" class="lift text-left border border-line rounded-xl p-4 bg-paper-100 hover:border-trust transition-colors text-sm">${s.label}</button>`).join('');
+  box.querySelectorAll('[data-emg]').forEach(btn => btn.addEventListener('click', () => {
+    const s = EMERGENCY_SITUATIONS.find(x => x.id === btn.dataset.emg);
+    document.getElementById('emergencyResult').innerHTML = `
+      <div class="border border-line rounded-2xl p-6 bg-paper-100 tick-in">
+        <h3 class="font-display font-semibold">${s.label} — do this now</h3>
+        <ol class="mt-3 space-y-2 text-sm">
+          ${s.steps.map((st,i) => `<li class="flex gap-2"><span class="font-mono text-trust">${i+1}</span><span>${st}</span></li>`).join('')}
+        </ol>
+      </div>`;
+    document.getElementById('emergencyResult').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }));
+}
+
+/* =================== LEARN: manipulation tactics =================== */
+function renderManipulationTactics(){
+  const box = document.getElementById('manipulationBox');
+  if(!box) return;
+  box.innerHTML = MANIPULATION_TACTICS.map(m => `
+    <div class="border border-line rounded-xl p-5 bg-paper-100">
+      <h3 class="font-display font-semibold">${m.name}</h3>
+      <p class="text-sm text-ink-700/70 mt-2 italic">${m.scenario}</p>
+      <p class="text-sm text-ink-700/80 mt-2"><span class="font-medium">Why it works:</span> ${m.why}</p>
+      <p class="text-sm text-trust mt-2"><span class="font-medium">How to resist it:</span> ${m.resist}</p>
+    </div>`).join('');
+}
+
+function renderVishingPicker(){
+  const box = document.getElementById('vishingPicker');
+  box.innerHTML = VISHING_SCENARIOS.map(v => `
+    <button data-vish="${v.id}" class="lift text-left border border-line rounded-xl p-4 bg-paper-100 hover:border-trust transition-colors">
+      <div class="text-xl">📞</div>
+      <h3 class="font-medium mt-2 text-sm">${v.title}</h3>
+    </button>`).join('');
+  box.querySelectorAll('[data-vish]').forEach(btn => btn.addEventListener('click', () => loadVishing(btn.dataset.vish)));
+}
+function loadVishing(id){
+  currentVishing = VISHING_SCENARIOS.find(v => v.id === id);
+  if(!currentVishing) return;
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById('vishingPlayer').classList.remove('hidden');
+  document.getElementById('vishingTitle').textContent = currentVishing.title;
+  document.getElementById('vishingTranscript').classList.add('hidden');
+  document.getElementById('vishingScriptText').textContent = currentVishing.script;
+  document.getElementById('vishingFlags').innerHTML = currentVishing.flags.map(f => `<li class="flex gap-2">🚩 <span>${f}</span></li>`).join('');
+  document.getElementById('vishingPlay').classList.remove('hidden');
+  document.getElementById('vishingStop').classList.add('hidden');
+  const unsupported = !('speechSynthesis' in window);
+  document.getElementById('vishingUnsupported').classList.toggle('hidden', !unsupported);
+  document.getElementById('vishingPlay').disabled = unsupported;
+  document.getElementById('vishingPlayer').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+document.getElementById('vishingPlay').addEventListener('click', () => {
+  if(!currentVishing || !('speechSynthesis' in window)) return;
+  unlockBadge('vishing');
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(currentVishing.script);
+  utter.rate = 0.98;
+  utter.onend = () => {
+    document.getElementById('vishingPlay').classList.remove('hidden');
+    document.getElementById('vishingStop').classList.add('hidden');
+  };
+  window.speechSynthesis.speak(utter);
+  document.getElementById('vishingPlay').classList.add('hidden');
+  document.getElementById('vishingStop').classList.remove('hidden');
+});
+document.getElementById('vishingStop').addEventListener('click', () => {
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById('vishingPlay').classList.remove('hidden');
+  document.getElementById('vishingStop').classList.add('hidden');
+});
+document.getElementById('vishingReveal').addEventListener('click', () => {
+  document.getElementById('vishingTranscript').classList.toggle('hidden');
+});
+
+document.querySelectorAll('.det-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.det-tab').forEach(t => { t.classList.remove('border-ink'); t.classList.add('border-transparent','text-ink-700/60'); });
+    tab.classList.add('border-ink'); tab.classList.remove('border-transparent','text-ink-700/60');
+    const which = tab.getAttribute('data-tab');
+    document.getElementById('det-scan').classList.toggle('hidden', which !== 'scan');
+    document.getElementById('det-url').classList.toggle('hidden', which !== 'url');
+    document.getElementById('det-vishing').classList.toggle('hidden', which !== 'vishing');
+    document.getElementById('det-checklist').classList.toggle('hidden', which !== 'checklist');
+  });
+});
+
+/* checklist mode */
+const checklistState = {};
+function renderChecklist(){
+  const box = document.getElementById('checklistQs');
+  box.innerHTML = CHECKLIST_QS.map(q => `
+    <label class="border border-line rounded-xl p-4 bg-paper-100 flex items-center justify-between gap-3 cursor-pointer transition-colors hover:border-trust hover:bg-paper-200">
+      <span class="text-sm">${q.text}</span>
+      <input type="checkbox" data-q="${q.id}" data-w="${q.w}" class="w-4 h-4 shrink-0">
+    </label>`).join('');
+  box.querySelectorAll('input').forEach(inp => inp.addEventListener('change', updateChecklistScore));
+}
+function updateChecklistScore(){
+  let total = 0, max = 0;
+  document.querySelectorAll('#checklistQs input').forEach(inp => {
+    max += parseInt(inp.dataset.w,10);
+    if(inp.checked) total += parseInt(inp.dataset.w,10);
+  });
+  const pct = max ? Math.round((total/max)*100) : 0;
+  const fill = document.getElementById('checklistFill');
+  const label = document.getElementById('checklistScoreLabel');
+  const explain = document.getElementById('checklistExplain');
+  let color = '#0E7C7B', text = 'Low risk';
+  if(pct >= 60){ color = '#B4472A'; text = 'High risk — treat this as a likely scam'; }
+  else if(pct >= 25){ color = '#B8862E'; text = 'Caution — verify independently before acting'; }
+  else { text = 'Low risk signals — still trust your instincts'; }
+  fill.style.width = pct + '%'; fill.style.background = color;
+  label.textContent = text; label.style.color = color;
+  explain.textContent = `${total} of ${max} possible risk points checked. The more boxes ticked, the more this matches a known scam pattern.`;
+}
+
+/* =================== SCENARIOS =================== */
+let scenarioIndex = 0;
+function renderScenarioNav(){
+  const nav = document.getElementById('scenarioNav');
+  nav.innerHTML = SCENARIOS.map((s,i) => `<button data-si="${i}" class="scenario-pill px-3 py-1.5 rounded-full text-sm border ${i===scenarioIndex?'border-ink bg-ink text-white':'border-line'}">Case ${i+1}</button>`).join('');
+  nav.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { scenarioIndex = parseInt(b.dataset.si,10); renderScenario(); renderScenarioNav(); }));
+}
+function renderScenario(){
+  const s = SCENARIOS[scenarioIndex];
+  document.getElementById('scenarioBody').innerHTML = `
+    <span class="case-number">CASE ${scenarioIndex+1} OF ${SCENARIOS.length}</span>
+    <h2 class="font-display text-xl font-semibold mt-2">${s.title}</h2>
+    <p class="text-ink-700/70 mt-3">${s.setup}</p>
+    <div id="scenarioChoices" class="mt-6 space-y-3">
+      ${s.choices.map((c,i)=>`<button data-ci="${i}" class="choice-btn w-full text-left border border-line rounded-xl p-4 hover:border-trust transition-colors text-sm">${c.text}</button>`).join('')}
+    </div>
+    <div id="scenarioOutcome" class="mt-5"></div>`;
+  document.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const choice = s.choices[parseInt(btn.dataset.ci,10)];
+      document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+      btn.classList.add(choice.outcome === 'good' ? 'border-trust' : choice.outcome === 'bad' ? 'border-signal' : 'border-caution');
+      const color = choice.outcome === 'good' ? 'text-trust' : choice.outcome === 'bad' ? 'text-signal' : 'text-caution';
+      const label = choice.outcome === 'good' ? 'Good call' : choice.outcome === 'bad' ? 'Risky move' : 'Partially safe';
+      document.getElementById('scenarioOutcome').innerHTML = `<div class="border border-line rounded-xl p-4 bg-paper-200 tick-in"><p class="font-medium ${color}">${label}</p><p class="text-sm text-ink-700/70 mt-1">${choice.explain}</p></div>`;
+      if(!appState.scenariosDone.includes(s.id)){
+        appState.scenariosDone.push(s.id);
+        state.save(appState);
+      }
+      if(appState.scenariosDone.length === SCENARIOS.length) unlockBadge('scenario');
+    });
+  });
+}
+
+/* =================== QUIZ =================== */
+let quizOrder = [], quizIdx = 0, quizScore = 0, quizAnswered = false;
+document.getElementById('startQuiz').addEventListener('click', () => {
+  quizOrder = QUIZ.map((_,i)=>i); quizIdx = 0; quizScore = 0;
+  document.getElementById('quizIntro').classList.add('hidden');
+  document.getElementById('quizResult').classList.add('hidden');
+  document.getElementById('quizPlay').classList.remove('hidden');
+  renderQuizQ();
+});
+document.getElementById('retakeQuiz').addEventListener('click', () => {
+  document.getElementById('quizResult').classList.add('hidden');
+  document.getElementById('quizIntro').classList.remove('hidden');
+});
+function renderQuizQ(){
+  quizAnswered = false;
+  const q = QUIZ[quizOrder[quizIdx]];
+  document.getElementById('quizProgress').textContent = `Question ${quizIdx+1} of ${QUIZ.length}`;
+  document.getElementById('quizScoreLive').textContent = `Score: ${quizScore}`;
+  document.getElementById('quizBar').style.width = Math.round(((quizIdx)/QUIZ.length)*100) + '%';
+  document.getElementById('quizQBox').innerHTML = `
+    <p class="font-medium">${q.q}</p>
+    <div class="mt-4 space-y-2.5" id="quizOpts">
+      ${q.opts.map((o,i)=>`<button data-oi="${i}" class="qopt w-full text-left border border-line rounded-lg px-4 py-3 text-sm hover:border-trust transition-colors">${o}</button>`).join('')}
+    </div>
+    <div id="quizExplain" class="mt-4"></div>
+    <button id="nextQ" class="mt-5 hidden bg-ink text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors">${quizIdx===QUIZ.length-1?'See results':'Next question'}</button>`;
+  document.querySelectorAll('.qopt').forEach(btn => btn.addEventListener('click', () => onQuizAnswer(btn, q)));
+}
+function onQuizAnswer(btn, q){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const chosen = parseInt(btn.dataset.oi,10);
+  document.querySelectorAll('.qopt').forEach((b,i) => {
+    b.disabled = true;
+    if(i === q.correct) b.classList.add('border-trust','bg-trust-100');
+    else if(i === chosen) b.classList.add('border-signal','bg-signal-100');
+  });
+  if(chosen === q.correct) quizScore++;
+  document.getElementById('quizExplain').innerHTML = `<p class="text-sm text-ink-700/70 border-l-2 border-trust pl-3">${q.explain}</p>`;
+  document.getElementById('quizScoreLive').textContent = `Score: ${quizScore}`;
+  document.getElementById('nextQ').classList.remove('hidden');
+  document.getElementById('nextQ').addEventListener('click', () => {
+    quizIdx++;
+    if(quizIdx >= QUIZ.length) finishQuiz(); else renderQuizQ();
+  }, {once:true});
+}
+function finishQuiz(){
+  document.getElementById('quizPlay').classList.add('hidden');
+  document.getElementById('quizResult').classList.remove('hidden');
+  document.getElementById('quizFinalScore').textContent = `${quizScore}/${QUIZ.length}`;
+  document.getElementById('quizFinalMsg').textContent = quizScore >= 8 ? 'Excellent — you\'re spotting the patterns that matter.' : quizScore >= 5 ? 'Good start — revisit the Learn section for the categories you missed.' : 'Worth another pass — the Learn section covers every question here.';
+  if(quizScore >= 6) unlockBadge('quizpass');
+  if(quizScore === QUIZ.length) unlockBadge('quizmaster');
+  appState.quizAttempts.push({score:quizScore, total:QUIZ.length, ts:Date.now()});
+  state.save(appState);
+  renderLiveChart();
+}
+
+/* =================== TOOLKIT =================== */
+function renderToolkit(){
+  const box = document.getElementById('checklistCards');
+  box.innerHTML = CATEGORIES.map(c => `
+    <div class="reveal lift border border-line rounded-xl p-5 bg-paper-100">
+      <h3 class="font-medium flex items-center gap-2">${c.icon} ${c.name}</h3>
+      <ul class="text-sm text-ink-700/70 mt-2 space-y-1">${c.doList.map(d=>`<li>✓ ${d}</li>`).join('')}${c.dontList.map(d=>`<li>✕ ${d}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+document.getElementById('printPoster').addEventListener('click', () => window.print());
+document.getElementById('printCertificate').addEventListener('click', () => window.print());
+
+/* ---- Personal Cyber Safety Checklist ---- */
+function renderPersonalChecklist(){
+  const box = document.getElementById('personalChecklistBox');
+  box.innerHTML = PERSONAL_CHECKLIST.map(item => `
+    <label class="border border-line rounded-xl p-4 bg-paper-200/40 flex items-start gap-3 cursor-pointer transition-colors hover:border-trust">
+      <input type="checkbox" data-pid="${item.id}" class="mt-0.5 w-4 h-4 shrink-0" ${appState.personalChecklist[item.id] ? 'checked' : ''}>
+      <span class="text-sm">${item.text}</span>
+    </label>`).join('');
+  box.querySelectorAll('input').forEach(inp => inp.addEventListener('change', () => {
+    appState.personalChecklist[inp.dataset.pid] = inp.checked;
+    state.save(appState);
+    updatePersonalScore();
+  }));
+  updatePersonalScore();
+}
+function updatePersonalScore(){
+  const checked = PERSONAL_CHECKLIST.filter(i => appState.personalChecklist[i.id]).length;
+  const pct = Math.round((checked / PERSONAL_CHECKLIST.length) * 100);
+  document.getElementById('personalPct').textContent = pct + '%';
+  document.getElementById('personalFill').style.width = pct + '%';
+  document.getElementById('personalFill').style.background = pct >= 80 ? '#0E7C7B' : pct >= 40 ? '#B8862E' : '#B4472A';
+  if(checked === PERSONAL_CHECKLIST.length) unlockBadge('selfaudit');
+}
+
+/* ---- Red Flags Library (auto-built from CATEGORIES data) ---- */
+const ALL_FLAGS = CATEGORIES.flatMap(c => c.flags.map(f => ({flag:f, cat:c.name, icon:c.icon})));
+function renderFlagsLibrary(filter){
+  const q = (filter||'').trim().toLowerCase();
+  const rows = ALL_FLAGS.filter(f => !q || f.flag.toLowerCase().includes(q) || f.cat.toLowerCase().includes(q));
+  const box = document.getElementById('flagsLibraryBox');
+  const empty = document.getElementById('flagsEmptyNote');
+  box.classList.toggle('hidden', rows.length === 0);
+  empty.classList.toggle('hidden', rows.length !== 0);
+  box.innerHTML = rows.map(f => `
+    <div class="ledger-row flex items-start gap-3 px-5 py-3">
+      <span class="text-lg shrink-0">${f.icon}</span>
+      <div><p class="text-sm">${f.flag}</p><p class="text-xs text-ink-700/50 mt-0.5">${f.cat}</p></div>
+    </div>`).join('');
+}
+document.getElementById('flagSearch').addEventListener('input', (e) => renderFlagsLibrary(e.target.value));
+
+/* ---- Glossary ---- */
+function renderGlossary(){
+  document.getElementById('glossaryBox').innerHTML = GLOSSARY.map(g => `
+    <div class="border border-line rounded-xl p-4 bg-paper-100">
+      <h3 class="font-medium text-sm">${g.term}</h3>
+      <p class="text-sm text-ink-700/70 mt-1">${g.def}</p>
+    </div>`).join('');
+}
+
+/* ---- Scam-Alert graphic generator ---- */
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '', lines = [];
+  words.forEach(word => {
+    const test = line ? line + ' ' + word : word;
+    if(ctx.measureText(test).width > maxWidth && line){ lines.push(line); line = word; }
+    else { line = test; }
+  });
+  if(line) lines.push(line);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+  return lines.length;
+}
+function drawAlertGraphic(catId){
+  const c = CATEGORIES.find(x => x.id === catId) || CATEGORIES[0];
+  const canvas = document.getElementById('alertCanvas');
+  if(!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#101A2B');
+  grad.addColorStop(1, '#182337');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#0E7C7B';
+  ctx.font = '600 34px Arial, sans-serif';
+  ctx.fillText('SCAM ALERT', W/2, 130);
+
+  ctx.font = '90px Arial, sans-serif';
+  ctx.fillText(c.icon, W/2, 250);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '600 52px Arial, sans-serif';
+  wrapCanvasText(ctx, c.name, W/2, 350, W - 160, 58);
+
+  ctx.font = '30px Arial, sans-serif';
+  ctx.fillStyle = '#D8DEE4';
+  let y = 460;
+  c.flags.slice(0, 3).forEach(flag => {
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#B4472A';
+    ctx.font = '600 30px Arial, sans-serif';
+    ctx.fillText('⚠', 90, y);
+    ctx.fillStyle = '#EDF1F4';
+    ctx.font = '28px Arial, sans-serif';
+    const lines = wrapCanvasText(ctx, flag, 140, y, W - 220, 36);
+    y += Math.max(1, lines) * 36 + 26;
+    ctx.textAlign = 'center';
+  });
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#0E7C7B';
+  ctx.font = '600 26px Arial, sans-serif';
+  ctx.fillText('Report scams: 1930 · cybercrime.gov.in', W/2, H - 110);
+  ctx.fillStyle = '#8592A6';
+  ctx.font = '22px Arial, sans-serif';
+  ctx.fillText('ShieldWise — Scam & Fraud Awareness', W/2, H - 60);
+}
+function renderAlertCategoryOptions(){
+  const sel = document.getElementById('alertCategorySelect');
+  if(!sel) return;
+  sel.innerHTML = CATEGORIES.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+  sel.addEventListener('change', () => drawAlertGraphic(sel.value));
+  drawAlertGraphic(sel.value);
+}
+document.getElementById('downloadAlert').addEventListener('click', () => {
+  const canvas = document.getElementById('alertCanvas');
+  const sel = document.getElementById('alertCategorySelect');
+  try {
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `shieldwise-scam-alert-${sel.value}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast('Scam-alert image downloaded.', '⬇️');
+  } catch(e){
+    showToast('Could not generate the image on this browser.', '⚠️');
+  }
+});
+
+/* ---- Family Cyber-Safety Card ---- */
+function renderFamilyCard(){
+  const f = appState.familyCard || {};
+  const nameEl = document.getElementById('fcName'), contactEl = document.getElementById('fcContact'), wordEl = document.getElementById('fcSafeWord');
+  if(!nameEl) return;
+  nameEl.value = f.name || ''; contactEl.value = f.contact || ''; wordEl.value = f.safeWord || '';
+  updateFamilyCardPreview();
+  [nameEl, contactEl, wordEl].forEach(el => el.addEventListener('input', () => {
+    appState.familyCard = { name: nameEl.value, contact: contactEl.value, safeWord: wordEl.value };
+    state.save(appState);
+    updateFamilyCardPreview();
+  }));
+}
+function updateFamilyCardPreview(){
+  const nameEl = document.getElementById('fcName');
+  if(!nameEl) return;
+  document.getElementById('fcNamePreview').textContent = nameEl.value.trim() || '[family member]';
+  document.getElementById('fcSafeWordPreview').textContent = document.getElementById('fcSafeWord').value.trim() || '[safe word]';
+  document.getElementById('fcContactPreview').textContent = document.getElementById('fcContact').value.trim() || '[emergency contact]';
+}
+document.getElementById('printFamilyCard').addEventListener('click', () => window.print());
+
+/* =================== ANALYTICS (sample + live) =================== */
+let chartBA = null, chartCat = null;
+let surveyAverages = null; // {knowAfter} — set once live survey data loads, used by the Dashboard comparison
+let analyticsLoaded = false; // becomes true once skeletons have been dismissed at least once
+let lastLiveState = null; // 'live' | 'empty' | 'blocked' — used to avoid repeat toasts on 30s polling
+const SAMPLE_BA = {labels:['Confidence spotting a scam (scaled to %)','Knowledge-check correct'], before:[40,35], after:[82,88]};
+const SAMPLE_CAT = {labels:['UPI/Banking','Job offer','Investment','Social/Romance','AI/Deepfake'], data:[38,24,19,14,9]};
+
+function renderStaticCharts(){
+  chartBA = new Chart(document.getElementById('chartBeforeAfter'), {
+    type:'bar',
+    data:{ labels:SAMPLE_BA.labels,
+      datasets:[
+        {label:'Before program', data:SAMPLE_BA.before, backgroundColor:'#D8DEE4'},
+        {label:'After program', data:SAMPLE_BA.after, backgroundColor:'#0E7C7B'} ]},
+    options:{ responsive:true, animation:{duration: prefersReducedMotion()?0:600}, scales:{ y:{ beginAtZero:true, max:100, ticks:{callback:v=>v+'%'} } }, plugins:{legend:{position:'bottom'}} }
+  });
+  chartCat = new Chart(document.getElementById('chartCategory'), {
+    type:'bar',
+    data:{ labels:SAMPLE_CAT.labels, datasets:[{label:'Respondents who encountered this', data:SAMPLE_CAT.data, backgroundColor:'#0E7C7B'}] },
+    options:{ indexAxis:'y', responsive:true, animation:{duration: prefersReducedMotion()?0:600}, scales:{ x:{ beginAtZero:true } }, plugins:{legend:{display:false}} }
+  });
+}
+
+/* reveal charts/stats once, fading skeletons out */
+function dismissAnalyticsSkeletons(){
+  if(analyticsLoaded) return;
+  analyticsLoaded = true;
+  ['chartBASkeleton','chartCatSkeleton'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['chartBeforeAfter','chartCategory'].forEach(id => document.getElementById(id).classList.remove('hidden'));
+}
+
+/* small counting animation for stat cards */
+function animateStatNumber(el, value, suffix){
+  el.classList.remove('skeleton','w-10','h-7','inline-block');
+  if(value === null || value === undefined){ el.textContent = '—'; return; }
+  if(prefersReducedMotion()){ el.textContent = value + (suffix||''); return; }
+  gsap.fromTo(el, {textContent:0}, {
+    textContent:value, duration:1, ease:'power2.out', snap:{textContent:1},
+    onUpdate(){ el.textContent = Math.round(this.targets()[0].textContent) + (suffix||''); }
+  });
+}
+
+/* ---- Live Google Form/Sheet data ---- */
+const LIVE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAysiurHZPjJr2JfiT899zqkNfXPK0UGXcLt972XVTruvmoQksHMWEKoLvuqaudmBmYeMewwIzfiNJ/pub?gid=1706666064&single=true&output=csv';
+
+function findHeader(headers, keywords){
+  return headers.find(h => keywords.every(k => h.toLowerCase().includes(k)));
+}
+
+function setLiveStatus(dotClass, text, pulsing){
+  const dot = document.getElementById('liveStatusDot');
+  dot.className = 'w-2 h-2 rounded-full ' + dotClass + (pulsing ? ' pulse-dot' : '');
+  document.getElementById('liveStatusText').textContent = text;
+}
+
+async function loadLiveSurveyData(){
+  const icon = document.getElementById('refreshIcon');
+  if(icon) icon.classList.add('animate-spin');
+  setLiveStatus('bg-caution', 'Checking for live survey data…', true);
+
+  let state = 'blocked', totalResponses = 0, beforeCount = 0, afterCount = 0;
+  let confBefore = null, confAfter = null, knowBefore = null, knowAfter = null;
+
+  try {
+    const res = await fetch(LIVE_CSV_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('Sheet not reachable');
+    const csvText = await res.text();
+    const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
+    const rows = parsed.data;
+    totalResponses = rows.length;
+
+    if(!rows.length){
+      state = 'empty';
+    } else {
+      const headers = parsed.meta.fields;
+      const stageCol = findHeader(headers, ['before','after']);
+      const confCol = findHeader(headers, ['confident']);
+      const knowCol = findHeader(headers, ['true']);
+      const catCol = findHeader(headers, ['encountered']);
+
+      const before = rows.filter(r => stageCol && (r[stageCol]||'').toLowerCase().startsWith('before'));
+      const after  = rows.filter(r => stageCol && (r[stageCol]||'').toLowerCase().startsWith('after'));
+      beforeCount = before.length; afterCount = after.length;
+
+      const avg = (arr, col) => {
+        const nums = arr.map(r => parseFloat(r[col])).filter(n => !isNaN(n));
+        return nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length) : null;
+      };
+      const pctCorrect = (arr, col) => {
+        const withVal = arr.filter(r => col && r[col]);
+        if(!withVal.length) return null;
+        const correct = withVal.filter(r => r[col].toLowerCase().includes('never be shared'));
+        return Math.round((correct.length/withVal.length)*100);
+      };
+
+      confBefore = avg(before, confCol); confAfter = avg(after, confCol);
+      knowBefore = pctCorrect(before, knowCol); knowAfter = pctCorrect(after, knowCol);
+
+      if(confBefore !== null || confAfter !== null){
+        chartBA.data.datasets[0].data = [confBefore!==null?Math.round(confBefore*20):0, knowBefore!==null?knowBefore:0];
+        chartBA.data.datasets[1].data = [confAfter!==null?Math.round(confAfter*20):0, knowAfter!==null?knowAfter:0];
+        chartBA.update();
+      }
+
+      const catEmptyNote = document.getElementById('catEmptyNote');
+      if(catCol){
+        const tally = {};
+        rows.forEach(r => {
+          const val = r[catCol] || '';
+          val.split(',').map(s=>s.trim()).filter(Boolean).forEach(item => { tally[item] = (tally[item]||0) + 1; });
+        });
+        const entries = Object.entries(tally).filter(([k])=>!/none/i.test(k));
+        if(entries.length){
+          chartCat.data.labels = entries.map(e=>e[0]);
+          chartCat.data.datasets[0].data = entries.map(e=>e[1]);
+          chartCat.update();
+          document.getElementById('chartCategory').classList.remove('hidden');
+          catEmptyNote.classList.add('hidden');
+        } else {
+          document.getElementById('chartCategory').classList.add('hidden');
+          catEmptyNote.classList.remove('hidden');
+        }
+      }
+      state = 'live';
+    }
+  } catch(err){
+    state = 'blocked';
+  }
+
+  dismissAnalyticsSkeletons();
+  if(icon) icon.classList.remove('animate-spin');
+
+  if(state === 'live'){
+    setLiveStatus('bg-trust', `Live — ${totalResponses} response${totalResponses!==1?'s':''} (${beforeCount} before / ${afterCount} after)`, true);
+    animateStatNumber(document.getElementById('statTotal'), totalResponses);
+    animateStatNumber(document.getElementById('statConfBefore'), confBefore!==null?Math.round(confBefore*10)/10:null, '/5');
+    animateStatNumber(document.getElementById('statConfAfter'), confAfter!==null?Math.round(confAfter*10)/10:null, '/5');
+    animateStatNumber(document.getElementById('statKnowAfter'), knowAfter, '%');
+    if(lastLiveState !== 'live') showToast('Analytics connected to live survey data.', '🟢');
+    surveyAverages = knowAfter !== null ? { knowAfter } : null;
+  } else if(state === 'empty'){
+    setLiveStatus('bg-caution', 'Connected — no survey responses yet. Sample numbers shown below.', false);
+    animateStatNumber(document.getElementById('statTotal'), 0);
+    animateStatNumber(document.getElementById('statConfBefore'), null);
+    animateStatNumber(document.getElementById('statConfAfter'), null);
+    animateStatNumber(document.getElementById('statKnowAfter'), null);
+    if(lastLiveState === 'live') showToast('No responses yet — showing sample data again.', '🟡');
+    surveyAverages = null;
+  } else {
+    setLiveStatus('bg-signal', 'Showing sample data — live connection unavailable here (expected on Claude\'s preview link; works once self-hosted).', false);
+    animateStatNumber(document.getElementById('statTotal'), SAMPLE_BA.before.length ? 0 : 0);
+    document.getElementById('statTotal').textContent = '—';
+    document.getElementById('statConfBefore').textContent = '—';
+    document.getElementById('statConfAfter').textContent = '—';
+    document.getElementById('statKnowAfter').textContent = '—';
+    document.querySelectorAll('#statTotal,#statConfBefore,#statConfAfter,#statKnowAfter').forEach(el => el.classList.remove('skeleton','w-10','h-7','inline-block'));
+    if(lastLiveState === 'live') showToast('Live connection lost — showing sample data.', '🟠');
+    surveyAverages = null;
+  }
+  document.getElementById('lastUpdatedText').textContent = 'Last checked ' + new Date().toLocaleTimeString();
+  lastLiveState = state;
+  renderDashboard();
+}
+document.getElementById('refreshLive').addEventListener('click', loadLiveSurveyData);
+
+let liveChartInstance = null;
+function renderLiveChart(){
+  const attempts = appState.quizAttempts;
+  const note = document.getElementById('liveEmptyNote');
+  const canvas = document.getElementById('chartLive');
+  if(!attempts.length){ note.classList.remove('hidden'); canvas.classList.add('hidden'); return; }
+  note.classList.add('hidden'); canvas.classList.remove('hidden');
+  const labels = attempts.map((a,i) => 'Attempt '+(i+1));
+  const data = attempts.map(a => Math.round((a.score/a.total)*100));
+  if(liveChartInstance) liveChartInstance.destroy();
+  liveChartInstance = new Chart(canvas, {
+    type:'line',
+    data:{ labels, datasets:[{label:'Score %', data, borderColor:'#0E7C7B', backgroundColor:'#0E7C7B22', fill:true, tension:.3}] },
+    options:{ responsive:true, animation:{duration: prefersReducedMotion()?0:500}, scales:{ y:{ beginAtZero:true, max:100 } }, plugins:{legend:{display:false}} }
+  });
+}
+
+/* =================== HOME nav data-cat helper =================== */
+document.querySelectorAll('[data-cat]').forEach(el => {
+  el.addEventListener('click', () => { setTimeout(() => openCategory(el.getAttribute('data-cat')), 50); });
+});
+
+/* =================== RESET =================== */
+document.getElementById('resetProgress').addEventListener('click', () => {
+  if(confirm('Reset all badges, quiz history and checklist answers on this device?')){
+    localStorage.removeItem('shieldwise_state');
+    appState = state.load();
+    state.save(appState);
+    renderBadgeCount(); renderBadges(); renderLiveChart(); renderDashboard(); renderPersonalChecklist();
+    showToast('Progress reset on this device.', '↺');
+  }
+});
+
+/* =================== INIT =================== */
+renderLedger();
+renderChecklist();
+renderScenarioNav();
+renderScenario();
+renderToolkit();
+renderPersonalChecklist();
+renderFlagsLibrary();
+renderGlossary();
+renderVishingPicker();
+renderEmergencyPicker();
+renderManipulationTactics();
+renderAlertCategoryOptions();
+renderFamilyCard();
+renderBadges();
+renderBadgeCount();
+renderStaticCharts();
+renderLiveChart();
+route();
+setTimeout(() => { animateCounters(); runScanline(); initHeroNetwork(); }, 300);
+loadLiveSurveyData();
+setInterval(loadLiveSurveyData, 30000);
+</script>
+</body>
+</html>
