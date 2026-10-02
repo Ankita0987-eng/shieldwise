@@ -2,7 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ShieldWise">
+<!-- SEO basics -->
+<meta name="description" content="ShieldWise is a free, no-login awareness platform to spot phishing, UPI/OTP scams, job and investment fraud, and voice-cloning calls. Includes a message/link detector, real-world scenarios, a quiz, and official reporting guides for India (1930, cybercrime.gov.in).">
+<meta name="keywords" content="phishing awareness, scam detector, UPI fraud, OTP scam, cyber fraud reporting India, 1930 helpline, cybercrime.gov.in, online safety quiz, fraud awareness, digital safety India">
+<meta name="author" content="ShieldWise">
+<link rel="canonical" href="https://shieldwise-gzakn93x4-ap2874527-6605.vercel.app/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ShieldWise",
+  "alternateName": "ShieldWise — Phishing, Scam & Fraud Detection Awareness Program",
+  "description": "A free, no-login awareness platform to spot phishing, UPI/OTP scams, job and investment fraud, and voice-cloning calls, with an interactive detector, quiz, scenarios, and official reporting guides for India.",
+  "url": "https://shieldwise-gzakn93x4-ap2874527-6605.vercel.app/",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": ["en", "hi"]
+}
+</script>
+<!-- Open Graph / social share preview. If you move to a custom domain, update these 3 URLs. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shieldwise-gzakn93x4-ap2874527-6605.vercel.app/">
+<meta property="og:title" content="ShieldWise — Phishing, Scam & Fraud Awareness">
+<meta property="og:description" content="Free, no-login scam detector, quiz, real-world scenarios and reporting guides — everything runs in your browser.">
+<meta property="og:image" content="https://shieldwise-gzakn93x4-ap2874527-6605.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ShieldWise — Phishing, Scam & Fraud Awareness">
+<meta name="twitter:description" content="Free, no-login scam detector, quiz, real-world scenarios and reporting guides — everything runs in your browser.">
+<meta name="twitter:image" content="https://shieldwise-gzakn93x4-ap2874527-6605.vercel.app/og-image.png">
 <title>ShieldWise — Phishing, Scam & Fraud Detection Awareness Program</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0E7C7B">
@@ -88,6 +123,39 @@
   .call-pulse-ring.ended{ animation:none; opacity:0; }
   @keyframes callPulse{ 0%,100%{ opacity:.35; } 50%{ opacity:.75; } }
   @media (prefers-reduced-motion: reduce){ .call-pulse-ring{ animation:none; } }
+
+  /* =================== DARK MODE =================== */
+  html[data-theme="dark"] body{ background:#0D131F; }
+  html[data-theme="dark"] .bg-paper-100{ background-color:#161E2E !important; }
+  html[data-theme="dark"] .bg-paper-200{ background-color:#1D2638 !important; }
+  html[data-theme="dark"] .bg-white{ background-color:#161E2E !important; }
+  html[data-theme="dark"] .bg-paper-200\/40{ background-color:rgba(29,38,56,.6) !important; }
+  html[data-theme="dark"] .text-ink{ color:#E8ECF2 !important; }
+  html[data-theme="dark"] .text-ink-700{ color:#C4CCD9 !important; }
+  html[data-theme="dark"] .text-ink-700\/70{ color:rgba(196,204,217,.75) !important; }
+  html[data-theme="dark"] .text-ink-700\/60{ color:rgba(196,204,217,.65) !important; }
+  html[data-theme="dark"] .text-ink-700\/50{ color:rgba(196,204,217,.5) !important; }
+  html[data-theme="dark"] .text-ink-700\/45{ color:rgba(196,204,217,.45) !important; }
+  html[data-theme="dark"] .text-ink-700\/40{ color:rgba(196,204,217,.4) !important; }
+  html[data-theme="dark"] .text-ink-700\/30{ color:rgba(196,204,217,.3) !important; }
+  html[data-theme="dark"] .text-ink-700\/80{ color:rgba(196,204,217,.85) !important; }
+  html[data-theme="dark"] .border-line{ border-color:#2B3647 !important; }
+  html[data-theme="dark"] #mainHeader{ background-color:rgba(13,19,31,.92) !important; border-color:#2B3647; }
+  html[data-theme="dark"] #mobileNav{ background-color:#0D131F !important; border-color:#2B3647; }
+  html[data-theme="dark"] .nav-link{ color:#C4CCD9; }
+  html[data-theme="dark"] #langToggle, html[data-theme="dark"] #darkToggle{ border-color:#2B3647; color:#C4CCD9; }
+  html[data-theme="dark"] .bg-ink{ background-color:#111A2B !important; }
+  html[data-theme="dark"] .bg-ink-700{ background-color:#1A2639 !important; }
+  html[data-theme="dark"] .bg-ink-800{ background-color:#161F30 !important; }
+  html[data-theme="dark"] .shadow-2xl{ --tw-shadow-color: rgba(0,0,0,.6); }
+  html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea{ background-color:#161E2E; color:#E8ECF2; }
+  html[data-theme="dark"] ::placeholder{ color:rgba(196,204,217,.4); }
+  html[data-theme="dark"] .risk-meter, html[data-theme="dark"] .h-1\.5.bg-paper-200{ background-color:#1D2638 !important; }
+  html[data-theme="dark"] code{ background-color:#1D2638 !important; color:#C4CCD9; }
+  html[data-theme="dark"] #onePagePoster{ color:#101A2B; } /* the printable poster always stays light/print-styled regardless of theme */
+  html[data-theme="dark"] .brochure-btn.border-line{ border-color:#2B3647; }
+  html[data-theme="dark"] .skeleton{ background:#1D2638; }
+  html[data-theme="dark"] .skeleton::after{ background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent); }
   .tick-in{ animation:tickIn .5s ease forwards; }
   @keyframes tickIn{ from{ opacity:0; transform:scale(.9);} to{ opacity:1; transform:scale(1);} }
   .badge-locked{ filter:grayscale(1) opacity(.35); }
@@ -111,6 +179,9 @@
   .view.active{ display:block; }
   .view.active.page-enter{ opacity:0; transform:translateY(8px); }
   .view.active.page-enter-active{ opacity:1; transform:none; transition:opacity .3s ease, transform .3s ease; }
+  @keyframes tabFadeIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  .tab-fade-in{ animation:tabFadeIn .28s ease; }
+  @media (prefers-reduced-motion: reduce){ .tab-fade-in{ animation:none; } }
 
   /* ---- hover-lift micro-interaction ---- */
   .lift{ transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
@@ -130,7 +201,19 @@
   }
 
   /* ---- toasts ---- */
-  #toastContainer{ position:fixed; top:1.25rem; right:1.25rem; z-index:100; display:flex; flex-direction:column; gap:.6rem; pointer-events:none; }
+  /* ---- PWA / standalone-mode safe areas (notch, home indicator) ---- */
+  :root{
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  html{ scroll-padding-top:env(safe-area-inset-top, 0px); }
+  #mainHeader{ top:env(safe-area-inset-top, 0px); }
+  #toastContainer{ top:calc(1.25rem + env(safe-area-inset-top, 0px)); }
+  #backToTop{ bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px)); }
+  .pwa-floating-actions{ bottom:calc(1.25rem + env(safe-area-inset-bottom, 0px)); }
+
+  #toastContainer{ position:fixed; right:1.25rem; z-index:100; display:flex; flex-direction:column; gap:.6rem; pointer-events:none; }
   .toast{
     pointer-events:auto; display:flex; align-items:flex-start; gap:.6rem; max-width:320px;
     background:#101A2B; color:#fff; border-radius:.75rem; padding:.75rem .9rem; font-size:.85rem;
@@ -142,7 +225,7 @@
 
   /* ---- back to top ---- */
   #backToTop{
-    position:fixed; bottom:1.5rem; right:1.5rem; z-index:60; width:2.75rem; height:2.75rem;
+    position:fixed; right:1.5rem; z-index:60; width:2.75rem; height:2.75rem;
     border-radius:9999px; background:#101A2B; color:#fff; display:flex; align-items:center; justify-content:center;
     box-shadow:0 14px 28px -16px rgba(16,26,43,.5);
     opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease, background .2s ease;
@@ -317,24 +400,6 @@
 <!-- ============ HEADER / NAV ============ -->
 <a href="#main-content" class="no-print sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm">Skip to main content</a>
 
-<!-- utility bar: slim, gives an institutional touch without dominating the page -->
-<div class="no-print bg-ink text-white/75 text-xs">
-  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-8 flex items-center justify-between">
-    <span class="hidden sm:flex items-center gap-2">
-      <span>Community Engagement Project</span><span class="text-white/30">·</span>
-      <span>Cyber-Safety Public Awareness Initiative</span>
-    </span>
-    <div class="flex items-center gap-2 ml-auto">
-      <a href="#main-content" class="hidden sm:inline hover:text-white transition-colors">Skip to Main Content</a>
-      <span class="hidden sm:inline text-white/30">·</span>
-      <span class="text-white/50">Text Size:</span>
-      <button id="textSizeDown" class="hover:text-white transition-colors px-1" aria-label="Decrease text size">A−</button>
-      <button id="textSizeReset" class="hover:text-white transition-colors px-1" aria-label="Reset text size">A</button>
-      <button id="textSizeUp" class="hover:text-white transition-colors px-1" aria-label="Increase text size">A+</button>
-    </div>
-  </div>
-</div>
-
 <header id="mainHeader" class="sticky top-0 z-50 bg-paper-100/90 backdrop-blur border-b border-line">
   <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
     <a href="#home" class="flex items-center gap-3 font-display font-semibold text-lg group">
@@ -342,7 +407,6 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#0E7C7B" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.2 12 2.6 2.6 5-5" stroke="#0E7C7B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
       <span>ShieldWise</span>
-      <span data-i18n="badgeAwarenessInitiative" class="hidden md:inline-flex items-center border border-line rounded-full px-2.5 py-0.5 text-[10px] font-medium text-ink-700/60 tracking-wide uppercase ml-1">Awareness Initiative</span>
     </a>
     <nav id="mainNav" class="hidden lg:flex items-center gap-6 text-sm">
       <a data-nav="home" data-i18n="navHome" href="#home" class="nav-link">Home</a>
@@ -356,13 +420,18 @@
       <a data-nav="survey" data-i18n="navSurvey" href="#survey" class="nav-link">Survey</a>
       <a data-nav="about" data-i18n="navAbout" href="#about" class="nav-link">About</a>
     </nav>
-    <div class="flex items-center gap-3">
-      <button id="langToggle" class="flex items-center gap-1.5 text-sm border border-line rounded-full pl-2.5 pr-3 py-1.5 hover:border-trust transition-colors font-medium" aria-label="Change language / भाषा बदलें">
-        <span class="text-base">🌐</span>
-        <span id="langToggleLabel">हिं</span>
-      </button>
-      <a href="tel:1930" class="hidden sm:flex items-center gap-1.5 text-sm border border-signal/40 text-signal rounded-full pl-2 pr-3 py-1.5 hover:bg-signal-100 transition-colors font-medium">
-        <span class="text-base">🚨</span>
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center border border-line rounded-full overflow-hidden">
+        <button id="langToggle" class="flex items-center gap-1 text-sm pl-3 pr-2.5 py-1.5 hover:bg-paper-200 transition-colors font-medium border-r border-line" aria-label="Change language / भाषा बदलें">
+          <span class="text-base leading-none">🌐</span>
+          <span id="langToggleLabel">हिं</span>
+        </button>
+        <button id="darkToggle" class="w-9 h-[34px] flex items-center justify-center hover:bg-paper-200 transition-colors" aria-label="Toggle dark mode">
+          <span id="darkToggleIcon" class="text-base leading-none">🌙</span>
+        </button>
+      </div>
+      <a href="tel:1930" class="hidden sm:flex items-center gap-1.5 text-sm bg-signal text-white rounded-full pl-2.5 pr-3.5 py-1.5 hover:bg-signal/90 transition-colors font-medium shadow-sm shadow-signal/30">
+        <span class="text-base leading-none">🚨</span>
         <span data-i18n="call1930Short">Call 1930</span>
       </a>
       <button id="navToggle" class="lg:hidden w-9 h-9 flex items-center justify-center border border-line rounded-lg" aria-label="Open menu">
@@ -729,6 +798,7 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.05 2m0 1.67a8.2 8.2 0 0 1 5.83 2.42 8.19 8.19 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.37c0-4.55 3.7-8.24 8.25-8.24m-4.53 4.7c-.15 0-.4.06-.61.3-.21.24-.8.78-.8 1.9s.82 2.2.93 2.36c.12.15 1.6 2.5 3.9 3.4 1.9.75 2.3.6 2.7.56.42-.04 1.35-.55 1.53-1.08.19-.53.19-.98.13-1.08-.06-.09-.21-.15-.44-.26-.24-.12-1.36-.67-1.57-.75-.21-.08-.36-.12-.52.12-.15.24-.6.75-.73.9-.14.16-.27.18-.5.06-.24-.12-1-.37-1.9-1.17-.7-.63-1.18-1.4-1.31-1.64-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.52-1.26-.72-1.72-.19-.45-.38-.39-.52-.4h-.44" /></svg>
           <span data-i18n="quizShareBtn">Share score</span>
         </button>
+        <a href="#progress" data-nav="progress" class="border border-line px-5 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors" data-i18n="quizViewProgress">View my progress →</a>
       </div>
     </div>
   </div>
@@ -849,6 +919,15 @@
           <canvas id="alertCanvas" width="1080" height="1080" style="width:100%;max-width:280px;" class="rounded-xl border border-line"></canvas>
         </div>
       </div>
+    </div>
+
+    <!-- My Progress -->
+    <div class="reveal mt-10 border border-line rounded-2xl p-6 bg-paper-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h3 class="font-display font-semibold" data-i18n="progCardTitle">My Progress</h3>
+        <p class="text-sm text-ink-700/70 mt-1" data-i18n="progCardDesc">See your quiz score trend, streak, badges and category coverage — saved only on this device.</p>
+      </div>
+      <a href="#progress" data-nav="progress" class="shrink-0 border border-line px-4 py-2.5 rounded-lg text-sm font-medium hover:border-trust transition-colors" data-i18n="progCardBtn">View progress</a>
     </div>
 
     <!-- Family Safety Card -->
@@ -1087,13 +1166,69 @@
         </div>
       </div>
       <div id="surveyChartsBox" class="mt-5 space-y-6">
-        <p id="surveyLoadingMsg" class="text-sm text-ink-700/60" data-i18n="survLoading">Loading results…</p>
+        <div class="survey-skeleton-row flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <div class="skeleton shrink-0" style="width:120px;height:120px;border-radius:50%;"></div>
+          <div class="flex-1 w-full space-y-2">
+            <div class="skeleton" style="height:14px;width:60%;"></div>
+            <div class="skeleton" style="height:10px;width:90%;"></div>
+            <div class="skeleton" style="height:10px;width:80%;"></div>
+            <div class="skeleton" style="height:10px;width:85%;"></div>
+          </div>
+        </div>
+        <div class="survey-skeleton-row flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <div class="skeleton shrink-0" style="width:120px;height:120px;border-radius:50%;"></div>
+          <div class="flex-1 w-full space-y-2">
+            <div class="skeleton" style="height:14px;width:50%;"></div>
+            <div class="skeleton" style="height:10px;width:70%;"></div>
+            <div class="skeleton" style="height:10px;width:60%;"></div>
+          </div>
+        </div>
+        <p class="text-xs text-ink-700/40" data-i18n="survLoading">Loading results…</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============ FAMILY SAFETY CARD (reached via Toolkit, not in main nav) ============ -->
+<section id="view-progress" class="view">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-14">
+    <a href="#toolkit" data-nav="toolkit" class="text-sm text-ink-700/60 hover:text-trust" data-i18n="fcBackToToolkit">← Back to Toolkit</a>
+    <p class="case-number mt-4" data-i18n="progCaseLabel">YOUR PROGRESS</p>
+    <h1 class="font-display text-3xl sm:text-4xl font-semibold mt-2" data-i18n="progH1">My Awareness Progress</h1>
+    <p class="text-ink-700/70 mt-3 max-w-2xl" data-i18n="progIntro">Saved only on this device — tracks how your quiz scores, streak and coverage have changed over time.</p>
+
+    <div class="grid sm:grid-cols-3 gap-4 mt-8">
+      <div class="border border-line rounded-2xl p-5 bg-paper-100 text-center">
+        <div class="font-display text-3xl font-semibold" id="progStreakVal">0</div>
+        <div class="text-xs text-ink-700/60 mt-1" data-i18n="progStreakLabel">Day streak</div>
+      </div>
+      <div class="border border-line rounded-2xl p-5 bg-paper-100 text-center">
+        <div class="font-display text-3xl font-semibold" id="progBestScoreVal">0/10</div>
+        <div class="text-xs text-ink-700/60 mt-1" data-i18n="progBestScoreLabel">Best quiz score</div>
+      </div>
+      <div class="border border-line rounded-2xl p-5 bg-paper-100 text-center">
+        <div class="font-display text-3xl font-semibold" id="progBadgeCountVal">0/8</div>
+        <div class="text-xs text-ink-700/60 mt-1" data-i18n="progBadgesLabel">Badges earned</div>
+      </div>
+    </div>
+
+    <div class="mt-8 border border-line rounded-2xl p-6 bg-paper-100">
+      <h2 class="font-display text-lg font-semibold" data-i18n="progTrendHeading">Quiz score over time</h2>
+      <div id="progTrendBox" class="mt-4"></div>
+    </div>
+
+    <div class="mt-8 border border-line rounded-2xl p-6 bg-paper-100">
+      <h2 class="font-display text-lg font-semibold" data-i18n="progCoverageHeading">Coverage</h2>
+      <div class="grid sm:grid-cols-3 gap-4 mt-4" id="progCoverageBox"></div>
+    </div>
+
+    <div class="mt-8 border border-line rounded-2xl p-6 bg-paper-100">
+      <h2 class="font-display text-lg font-semibold" data-i18n="progBadgesHeading">Badges</h2>
+      <div id="progBadgesBox" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"></div>
+    </div>
+  </div>
+</section>
+
 <section id="view-familycard" class="view">
   <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
     <div class="no-print flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -1262,7 +1397,7 @@
 </button>
 
 <!-- floating emergency quick actions: compact, bottom-left, never covers content -->
-<div class="no-print fixed bottom-5 left-5 z-40 flex flex-col gap-2">
+<div class="no-print pwa-floating-actions fixed left-5 z-40 flex flex-col gap-2">
   <a href="tel:1930" aria-label="Call 1930 Cyber Fraud Helpline" class="flex items-center gap-2 bg-signal text-white pl-3 pr-4 py-2.5 rounded-full text-xs font-medium shadow-lg shadow-signal/30 hover:bg-signal/90 transition-colors">
     <span>🚨</span><span data-i18n="call1930Short" class="hidden sm:inline">Call 1930</span>
   </a>
@@ -1808,7 +1943,11 @@ const I18N = {
     homeTip5:'Verify the sender before clicking any link they send.', homeTip6:'Report suspicious financial fraud quickly — call 1930.',
     homeSmsMeta:'Text Message · Today 2:14 PM', homeSmsDelivered:'Delivered',
     detIncomingCall:'Incoming call…', detAnswer:'Answer', detEndCall:'End',
-    quizShareBtn:'Share score',
+    quizShareBtn:'Share score', quizViewProgress:'View my progress →',
+    progCardTitle:'My Progress', progCardDesc:'See your quiz score trend, streak, badges and category coverage — saved only on this device.', progCardBtn:'View progress',
+    progCaseLabel:'YOUR PROGRESS', progH1:'My Awareness Progress', progIntro:'Saved only on this device — tracks how your quiz scores, streak and coverage have changed over time.',
+    progStreakLabel:'Day streak', progBestScoreLabel:'Best quiz score', progBadgesLabel:'Badges earned',
+    progTrendHeading:'Quiz score over time', progCoverageHeading:'Coverage', progBadgesHeading:'Badges',
     tkShareWA:'Share on WhatsApp', tkShareWANote:'Download the image first, then attach it in WhatsApp — this button shares the message and link only.',
     fcShareIdea:'Share this idea', fcShareNote:'For your family\'s safety, "Share" only sends a general prompt — never your actual safe word or contact details.',
     posterTagline:'Cyber Safety Quick Reference — Print &amp; Keep',
@@ -1973,7 +2112,11 @@ const I18N = {
     homeTip5:'कोई भी लिंक भेजने वाले सेंडर को क्लिक करने से पहले वेरिफाई करें।', homeTip6:'संदिग्ध वित्तीय धोखाधड़ी की जल्दी रिपोर्ट करें — 1930 पर कॉल करें।',
     homeSmsMeta:'टेक्स्ट मैसेज · आज दोपहर 2:14', homeSmsDelivered:'डिलीवर हो गया',
     detIncomingCall:'इनकमिंग कॉल…', detAnswer:'जवाब दें', detEndCall:'खत्म करें',
-    quizShareBtn:'स्कोर शेयर करें',
+    quizShareBtn:'स्कोर शेयर करें', quizViewProgress:'मेरी प्रोग्रेस देखें →',
+    progCardTitle:'मेरी प्रोग्रेस', progCardDesc:'अपना क्विज़ स्कोर ट्रेंड, स्ट्रीक, बैज और कैटेगरी कवरेज देखें — सिर्फ इस डिवाइस पर सेव होता है।', progCardBtn:'प्रोग्रेस देखें',
+    progCaseLabel:'आपकी प्रोग्रेस', progH1:'मेरी जागरूकता प्रोग्रेस', progIntro:'सिर्फ इस डिवाइस पर सेव होता है — यह ट्रैक करता है कि समय के साथ आपका क्विज़ स्कोर, स्ट्रीक और कवरेज कैसे बदले हैं।',
+    progStreakLabel:'दिनों की स्ट्रीक', progBestScoreLabel:'सबसे अच्छा क्विज़ स्कोर', progBadgesLabel:'अर्जित बैज',
+    progTrendHeading:'समय के साथ क्विज़ स्कोर', progCoverageHeading:'कवरेज', progBadgesHeading:'बैज',
     tkShareWA:'WhatsApp पर शेयर करें', tkShareWANote:'पहले इमेज डाउनलोड करें, फिर उसे WhatsApp में अटैच करें — यह बटन सिर्फ मैसेज और लिंक शेयर करता है।',
     fcShareIdea:'यह आइडिया शेयर करें', fcShareNote:'आपके परिवार की सुरक्षा के लिए, "शेयर" सिर्फ एक सामान्य प्रॉम्प्ट भेजता है — कभी भी आपका असली सेफ वर्ड या कॉन्टैक्ट डिटेल्स नहीं।',
     posterTagline:'साइबर सुरक्षा त्वरित संदर्भ — प्रिंट करें और रखें',
@@ -2057,6 +2200,23 @@ function initLanguageToggle(){
   const btn = document.getElementById('langToggle');
   if(btn) btn.addEventListener('click', () => setLanguage(currentLang === 'hi' ? 'en' : 'hi'));
   applyTranslations(currentLang);
+}
+
+/* =================== DARK MODE =================== */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('shieldwise_theme', theme);
+  const icon = document.getElementById('darkToggleIcon');
+  if(icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+function initDarkMode(){
+  const saved = localStorage.getItem('shieldwise_theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+  const btn = document.getElementById('darkToggle');
+  if(btn) btn.addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
 }
 
 const MANIPULATION_TACTICS = [
@@ -2154,32 +2314,73 @@ function renderBadges(){
   }).join('');
 }
 
+/* =================== MY PROGRESS =================== */
+function renderProgress(){
+  const box = document.getElementById('progTrendBox');
+  if(!box) return;
+  const hi = currentLang === 'hi';
+
+  document.getElementById('progStreakVal').textContent = (appState.streak && appState.streak.count) || 0;
+  const attempts = appState.quizAttempts || [];
+  const best = attempts.reduce((m,a) => Math.max(m, a.score), 0);
+  const bestTotal = attempts.length ? (attempts.find(a => a.score === best) || {}).total || QUIZ.length : QUIZ.length;
+  document.getElementById('progBestScoreVal').textContent = attempts.length ? `${best}/${bestTotal}` : '—';
+  document.getElementById('progBadgeCountVal').textContent = `${appState.badges.length}/${BADGES.length}`;
+
+  if(!attempts.length){
+    box.innerHTML = `<p class="text-sm text-ink-700/60">${hi?'ट्रैकिंग शुरू करने के लिए क्विज़ लें।':'Take the quiz to start tracking.'}</p>`;
+  } else {
+    const W = 560, H = 160, pad = 24;
+    const pts = attempts.map((a,i) => {
+      const x = attempts.length > 1 ? pad + (i/(attempts.length-1)) * (W-2*pad) : W/2;
+      const y = H - pad - ((a.score/(a.total||1)) * (H-2*pad));
+      return {x, y, a};
+    });
+    const path = pts.map((p,i) => (i===0?'M':'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+    const dots = pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#0E7C7B"><title>${p.a.score}/${p.a.total}</title></circle>`).join('');
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="w-full" style="max-height:180px">
+      <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="currentColor" class="text-ink-700/20" stroke-width="1"/>
+      <path d="${path}" fill="none" stroke="#0E7C7B" stroke-width="2.5"/>
+      ${dots}
+    </svg>
+    <p class="text-xs text-ink-700/50 mt-2">${hi?`${attempts.length} कोशिशें — आखिरी: ${best}/${bestTotal}`:`${attempts.length} attempt${attempts.length>1?'s':''} — most recent best: ${best}/${bestTotal}`}</p>`;
+  }
+
+  const catPct = Math.round((appState.learnedCats.length/CATEGORIES.length)*100);
+  const scenPct = Math.round((appState.scenariosDone.length/SCENARIOS.length)*100);
+  const checkPct = Math.round((PERSONAL_CHECKLIST.filter(i => appState.personalChecklist[i.id]).length/PERSONAL_CHECKLIST.length)*100);
+  const coverage = [
+    {label: hi?'Learn केस फाइलें':'Learn case files', pct:catPct},
+    {label: hi?'परिदृश्य पूरे किए':'Scenarios completed', pct:scenPct},
+    {label: hi?'सेल्फ-ऑडिट चेकलिस्ट':'Self-audit checklist', pct:checkPct},
+  ];
+  document.getElementById('progCoverageBox').innerHTML = coverage.map(c => `
+    <div class="text-center">
+      <div class="relative w-20 h-20 mx-auto">
+        <svg viewBox="0 0 36 36" class="w-20 h-20" style="transform:rotate(-90deg)">
+          <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="currentColor" class="text-paper-200" stroke-width="3.5"/>
+          <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#0E7C7B" stroke-width="3.5" stroke-dasharray="${c.pct} ${100-c.pct}" stroke-dashoffset="25"/>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center text-sm font-semibold">${c.pct}%</div>
+      </div>
+      <p class="text-xs text-ink-700/60 mt-2">${c.label}</p>
+    </div>`).join('');
+
+  const badgesList = currentLang === 'hi' ? BADGES_HI : BADGES;
+  document.getElementById('progBadgesBox').innerHTML = badgesList.map((b,i) => {
+    const unlocked = appState.badges.includes(BADGES[i].id);
+    return `<div class="border border-line rounded-xl p-4 text-center ${unlocked?'':'opacity-40'}">
+      <div class="text-2xl">${unlocked ? b.icon : '🔒'}</div>
+      <p class="text-xs font-medium mt-2">${b.name}</p>
+    </div>`;
+  }).join('');
+}
+
 /* =================== A11Y / MOTION HELPER =================== */
 function prefersReducedMotion(){
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/* ---- text-size control (real accessibility feature, common on government portals) ---- */
-const TEXT_SIZE_STEPS = [87.5, 100, 112.5, 125];
-function applyTextSize(pct){
-  document.documentElement.style.fontSize = pct + '%';
-  localStorage.setItem('shieldwise_textsize', String(pct));
-}
-function initTextSizeControl(){
-  const saved = parseFloat(localStorage.getItem('shieldwise_textsize')) || 100;
-  applyTextSize(saved);
-  document.getElementById('textSizeUp').addEventListener('click', () => {
-    const current = parseFloat(document.documentElement.style.fontSize) || 100;
-    const next = TEXT_SIZE_STEPS.find(s => s > current) || TEXT_SIZE_STEPS[TEXT_SIZE_STEPS.length - 1];
-    applyTextSize(next);
-  });
-  document.getElementById('textSizeDown').addEventListener('click', () => {
-    const current = parseFloat(document.documentElement.style.fontSize) || 100;
-    const prev = [...TEXT_SIZE_STEPS].reverse().find(s => s < current) || TEXT_SIZE_STEPS[0];
-    applyTextSize(prev);
-  });
-  document.getElementById('textSizeReset').addEventListener('click', () => applyTextSize(100));
-}
 
 /* =================== TOASTS =================== */
 function showToast(message, icon){
@@ -2217,10 +2418,11 @@ function showView(name){
   if(name === 'toolkit') unlockBadge('toolkit');
   if(name === 'survey') startSurveyAutoRefresh();
   else clearInterval(surveyRefreshTimer);
+  if(name === 'progress') renderProgress();
 }
 function route(){
   const hash = (location.hash || '#home').replace('#','');
-  const known = ['home','learn','detector','scenarios','quiz','toolkit','report','cep','survey','about','familycard'];
+  const known = ['home','learn','detector','scenarios','quiz','toolkit','report','cep','survey','about','familycard','progress'];
   showView(known.includes(hash) ? hash : 'home');
 }
 window.addEventListener('hashchange', route);
@@ -2408,9 +2610,14 @@ function openCategory(id){
 
   document.getElementById('categoryDetail').innerHTML = `
     <div class="border border-line rounded-2xl p-6 sm:p-8 bg-paper-100">
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">${cd.icon}</span>
-        <h2 class="font-display text-2xl font-semibold">${cd.name}</h2>
+      <div class="flex items-center gap-3 flex-wrap justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">${cd.icon}</span>
+          <h2 class="font-display text-2xl font-semibold">${cd.name}</h2>
+        </div>
+        <button id="listenAloudBtn" class="border border-line px-3 py-1.5 rounded-full text-xs font-medium hover:border-trust transition-colors flex items-center gap-1.5">
+          <span id="listenAloudIcon">🔊</span> <span id="listenAloudLabel">${hi?'सुनें':'Listen'}</span>
+        </button>
       </div>
       <div class="grid md:grid-cols-2 gap-8 mt-6">
         <div>
@@ -2430,6 +2637,28 @@ function openCategory(id){
       </div>
     </div>`;
   document.getElementById('categoryDetail').scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  const listenBtn = document.getElementById('listenAloudBtn');
+  if(listenBtn){
+    listenBtn.addEventListener('click', () => {
+      if(!('speechSynthesis' in window)) return;
+      const icon = document.getElementById('listenAloudIcon');
+      const label = document.getElementById('listenAloudLabel');
+      if(window.speechSynthesis.speaking){
+        window.speechSynthesis.cancel();
+        icon.textContent = '🔊'; label.textContent = hi?'सुनें':'Listen';
+        return;
+      }
+      const text = [cd.name, cd.summary, ...cd.how, cd.case].join('. ');
+      const utter = new SpeechSynthesisUtterance(text);
+      if(hi) utter.lang = 'hi-IN';
+      utter.rate = 0.98;
+      utter.onend = utter.onerror = () => { icon.textContent = '🔊'; label.textContent = hi?'सुनें':'Listen'; };
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+      icon.textContent = '⏸️'; label.textContent = hi?'रोकें':'Stop';
+    });
+  }
 }
 
 /* =================== DETECTOR: message signal engine =================== */
@@ -3111,6 +3340,12 @@ document.querySelectorAll('.det-tab').forEach(tab => {
     document.getElementById('det-checklist').classList.toggle('hidden', which !== 'checklist');
     document.getElementById('det-game').classList.toggle('hidden', which !== 'game');
     if(which === 'game' && gameIndex === -1) startGame();
+    const panel = document.getElementById('det-' + which);
+    if(panel && !prefersReducedMotion()){
+      panel.classList.remove('tab-fade-in');
+      void panel.offsetWidth; // restart animation
+      panel.classList.add('tab-fade-in');
+    }
   });
 });
 
@@ -3575,20 +3810,92 @@ function buildSurveyCounts(rows){
   }).filter(Boolean);
 }
 
-function svgBarChart(q){
-  const max = Math.max(...q.entries.map(e => e[1]), 1);
-  const rows = q.entries.map(([label, count]) => {
-    const pct = Math.round((count/max)*100);
-    const safeLabel = label.length > 42 ? label.slice(0,42) + '…' : label;
+const DONUT_COLORS = ['#0E7C7B','#B4472A','#B8862E','#1C7A4D','#D97B29','#C99A3F','#22304A','#8592A6'];
+function svgPieChart(q){
+  const total = q.entries.reduce((s,e) => s + e[1], 0) || 1;
+  const R = 15.9155; // radius chosen so 2*PI*R ≈ 100, so stroke-dasharray can use plain percentages
+  let cumulative = 0;
+  const segments = q.entries.map(([label, count], i) => {
+    const pct = (count/total) * 100;
+    const dasharray = `${pct.toFixed(2)} ${(100-pct).toFixed(2)}`;
+    const dashoffset = (100 - cumulative + 25).toFixed(2); // start at 12 o'clock, go clockwise
+    cumulative += pct;
+    const color = DONUT_COLORS[i % DONUT_COLORS.length];
+    return `<circle cx="18" cy="18" r="${R}" fill="transparent" stroke="${color}" stroke-width="4.2" stroke-dasharray="${dasharray}" stroke-dashoffset="${dashoffset}"></circle>`;
+  }).join('');
+  const legend = q.entries.map(([label, count], i) => {
+    const pct = Math.round((count/total)*100);
+    const color = DONUT_COLORS[i % DONUT_COLORS.length];
+    const safeLabel = label.length > 48 ? label.slice(0,48) + '…' : label;
     return `<div class="flex items-center gap-2 text-xs">
-      <span class="w-32 sm:w-44 shrink-0 text-ink-700/70 truncate" title="${label.replace(/"/g,'&quot;')}">${safeLabel}</span>
-      <div class="flex-1 h-5 bg-paper-200 rounded overflow-hidden"><div class="h-full bg-trust" style="width:${pct}%"></div></div>
-      <span class="w-10 shrink-0 text-right font-medium">${count}</span>
+      <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span>
+      <span class="flex-1 text-ink-700/70 truncate" title="${label.replace(/"/g,'&quot;')}">${safeLabel}</span>
+      <span class="font-medium shrink-0">${count} <span class="text-ink-700/40 font-normal">(${pct}%)</span></span>
     </div>`;
   }).join('');
-  return `<div>
-    <h3 class="text-sm font-medium mb-2">${q.header} <span class="text-ink-700/40 font-normal">(${q.total})</span></h3>
-    <div class="space-y-1.5">${rows}</div>
+  return `<div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+    <svg viewBox="0 0 36 36" class="shrink-0" style="width:120px;height:120px;transform:rotate(0deg)">${segments}</svg>
+    <div class="flex-1 w-full">
+      <h3 class="text-sm font-medium mb-2">${q.header} <span class="text-ink-700/40 font-normal">(${q.total})</span></h3>
+      <div class="space-y-1.5">${legend}</div>
+    </div>
+  </div>`;
+}
+
+const BEFORE_RE = /\b(before|pehle|prior|previously|pre[\s-]?test)\b/i;
+const AFTER_RE = /\b(after|baad|now|currently|today|post[\s-]?test)\b/i;
+
+function findBeforeAfterPairs(questions){
+  const befores = questions.filter(q => BEFORE_RE.test(q.header));
+  const afters = questions.filter(q => AFTER_RE.test(q.header));
+  const pairs = [];
+  const used = new Set();
+  befores.forEach(b => {
+    // Match to the "after" column whose answer options overlap the most — handles differently-worded question stems.
+    const bLabels = new Set(b.entries.map(e => e[0].toLowerCase()));
+    let best = null, bestScore = 0;
+    afters.forEach(a => {
+      if(used.has(a.header)) return;
+      const overlap = a.entries.filter(e => bLabels.has(e[0].toLowerCase())).length;
+      if(overlap > bestScore){ bestScore = overlap; best = a; }
+    });
+    if(best && bestScore >= Math.min(2, b.entries.length)){
+      pairs.push({before:b, after:best});
+      used.add(b.header); used.add(best.header);
+    }
+  });
+  const remaining = questions.filter(q => !pairs.some(p => p.before.header === q.header || p.after.header === q.header));
+  return {pairs, remaining};
+}
+
+function svgComparisonChart(pair){
+  const hi = currentLang === 'hi';
+  const labels = [...new Set([...pair.before.entries, ...pair.after.entries].map(e => e[0]))];
+  const bMap = Object.fromEntries(pair.before.entries);
+  const aMap = Object.fromEntries(pair.after.entries);
+  const bTotal = pair.before.total || 1, aTotal = pair.after.total || 1;
+  const rows = labels.map(label => {
+    const bPct = Math.round(((bMap[label]||0)/bTotal)*100);
+    const aPct = Math.round(((aMap[label]||0)/aTotal)*100);
+    const safeLabel = label.length > 36 ? label.slice(0,36) + '…' : label;
+    return `<div class="text-xs">
+      <div class="text-ink-700/70 mb-1 truncate" title="${label.replace(/"/g,'&quot;')}">${safeLabel}</div>
+      <div class="flex items-center gap-2 mb-0.5">
+        <span class="w-14 shrink-0 text-ink-700/50">${hi?'पहले':'Before'}</span>
+        <div class="flex-1 h-4 bg-paper-200 rounded overflow-hidden"><div class="h-full bg-caution" style="width:${bPct}%"></div></div>
+        <span class="w-10 shrink-0 text-right font-medium">${bPct}%</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-14 shrink-0 text-ink-700/50">${hi?'अब':'After'}</span>
+        <div class="flex-1 h-4 bg-paper-200 rounded overflow-hidden"><div class="h-full bg-trust" style="width:${aPct}%"></div></div>
+        <span class="w-10 shrink-0 text-right font-medium">${aPct}%</span>
+      </div>
+    </div>`;
+  }).join('<div class="h-2"></div>');
+  return `<div class="border border-trust/30 rounded-xl p-4 bg-trust-100/30">
+    <h3 class="text-sm font-medium mb-1 flex items-center gap-1.5">📈 ${hi?'पहले बनाम अब':'Before vs After'}</h3>
+    <p class="text-xs text-ink-700/50 mb-3">${pair.before.header} → ${pair.after.header}</p>
+    <div class="space-y-3">${rows}</div>
   </div>`;
 }
 
@@ -3605,7 +3912,9 @@ async function loadSurveyResults(){
     if(!questions.length){
       box.innerHTML = `<p class="text-sm text-ink-700/60">${hi?'अभी तक कोई जवाब दर्ज नहीं हुआ।':'No responses recorded yet.'}</p>`;
     } else {
-      box.innerHTML = questions.map(svgBarChart).join('<hr class="border-line my-4">');
+      const {pairs, remaining} = findBeforeAfterPairs(questions);
+      const parts = [...pairs.map(svgComparisonChart), ...remaining.map(svgPieChart)];
+      box.innerHTML = parts.join('<hr class="border-line my-4">');
     }
     document.getElementById('surveyLastUpdated').textContent = (hi?'आखिरी बार अपडेट: ':'Last updated: ') + new Date().toLocaleTimeString(hi?'hi-IN':'en-IN');
   } catch(e){
@@ -3682,12 +3991,12 @@ renderBadgeCount();
 // this only affects what shows the moment the page itself first loads.
 if(location.hash) history.replaceState(null, '', location.pathname + location.search);
 showView('home');
-initTextSizeControl();
 setTimeout(() => { animateCounters(); runScanline(); initHeroNetwork(); }, 300);
 initAmbientNetwork();
 initAmbientParallax();
 initCursorGlow();
 initLanguageToggle();
+initDarkMode();
 renderStreak();
 
 /* Register the service worker for offline/installable support (PWA).
