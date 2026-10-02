@@ -1073,6 +1073,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Live Survey Results: auto-refreshing charts built from a public, non-sensitive CSV export -->
+    <div class="reveal mt-12 border border-line rounded-2xl p-6 sm:p-8 bg-paper-100">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="font-display text-xl font-semibold" data-i18n="survResultsHeading">Live Survey Results</h2>
+          <p class="text-sm text-ink-700/70 mt-1 max-w-xl" data-i18n="survResultsSub">Aggregated, anonymous answer counts only — refreshes automatically. Reflects however recently Google last updated the published sheet, not truly instant.</p>
+        </div>
+        <div class="text-right shrink-0">
+          <button id="surveyRefresh" class="border border-line px-3 py-1.5 rounded-lg text-xs font-medium hover:border-trust transition-colors" data-i18n="survRefreshBtn">↻ Refresh now</button>
+          <p id="surveyLastUpdated" class="text-[11px] text-ink-700/40 mt-1"></p>
+        </div>
+      </div>
+      <div id="surveyChartsBox" class="mt-5 space-y-6">
+        <p id="surveyLoadingMsg" class="text-sm text-ink-700/60" data-i18n="survLoading">Loading results…</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1147,7 +1164,7 @@
       <li data-i18n-html="aboutPriv1">• The message scanner, URL checker, and vishing simulator run <strong>entirely in your browser</strong>. Nothing you paste into them is sent to ShieldWise, or to any third party — there is no backend and no external analysis API involved.</li>
       <li data-i18n="aboutPriv2">• No live domain-reputation or threat-intelligence service is used, because doing so safely would require a backend to protect an API key, which this project intentionally doesn't have. Where that limits the checkers, the tool says so directly rather than faking a result.</li>
       <li data-i18n="aboutPriv3">• Your badges, quiz history, checklist answers, and family safety card are saved only in your own browser's local storage — never uploaded anywhere. Clearing your browser data clears them.</li>
-      <li data-i18n="aboutPriv4">• Survey responses go directly to Google's own Forms/Sheets infrastructure, not through ShieldWise — this site does not read back or display your response data anywhere.</li>
+      <li data-i18n-html="aboutPriv4">• Survey responses go directly to Google's own Forms/Sheets infrastructure. The Survey page shows a <strong>live, aggregated chart</strong> of anonymous answer counts (e.g. "6 people chose option A") from a separate, non-sensitive summary sheet — no names, emails or free-text answers are ever published or displayed.</li>
       <li data-i18n="aboutPriv5">• ShieldWise never asks for and should never be given your OTP, PIN, password, CVV or full banking credentials, even to "demonstrate" a scam.</li>
     </ul>
 
@@ -1744,6 +1761,8 @@ const I18N = {
     survCaseLabel:'AWARENESS SURVEY', survH1:'Tell us what you knew — before and after', survIntro:"This short survey measures awareness before and after using the platform, as part of this Community Engagement Project's reporting.",
     survSavedHeading:'Responses saved automatically', survSavedText:'Every response is collected in your linked Google Sheet, ready to export for your CEP report.',
     survQuestionsHeading:'Suggested questions', survQ1:'• Have you ever received a message you suspected was a scam?', survQ2:'• Rate your confidence in spotting a phishing message (1–5)', survQ3:'• What would you do first if you shared your OTP by mistake?', survQ4:'• Which of these is a genuine bank practice? (multiple choice)',
+    survResultsHeading:'Live Survey Results', survResultsSub:"Aggregated, anonymous answer counts only — refreshes automatically. Reflects however recently Google last updated the published sheet, not truly instant.",
+    survRefreshBtn:'↻ Refresh now', survLoading:'Loading results…',
     fcBackToToolkit:'← Back to Toolkit', fcPrintSave:'Print / Save as PDF',
     fcFillIntro:'Fill this in once, print it, and keep it near a landline or with an older relative — the safe word is the single most useful defence against a voice-clone "emergency" call.',
     fcNameLabel:"Family member's name", fcContactLabel:'A trusted emergency contact', fcSafeWordLabel:"Your family's safe word",
@@ -1757,7 +1776,7 @@ const I18N = {
     aboutPriv1:'• The message scanner, URL checker, and vishing simulator run <strong>entirely in your browser</strong>. Nothing you paste into them is sent to ShieldWise, or to any third party — there is no backend and no external analysis API involved.',
     aboutPriv2:"• No live domain-reputation or threat-intelligence service is used, because doing so safely would require a backend to protect an API key, which this project intentionally doesn't have. Where that limits the checkers, the tool says so directly rather than faking a result.",
     aboutPriv3:"• Your badges, quiz history, checklist answers, and family safety card are saved only in your own browser's local storage — never uploaded anywhere. Clearing your browser data clears them.",
-    aboutPriv4:'• Survey responses go directly to Google\'s own Forms/Sheets infrastructure, not through ShieldWise — this site does not read back or display your response data anywhere.',
+    aboutPriv4:'• Survey responses go directly to Google\'s own Forms/Sheets infrastructure. The Survey page shows a <strong>live, aggregated chart</strong> of anonymous answer counts (e.g. "6 people chose option A") from a separate, non-sensitive summary sheet — no names, emails or free-text answers are ever published or displayed.',
     aboutPriv5:'• ShieldWise never asks for and should never be given your OTP, PIN, password, CVV or full banking credentials, even to "demonstrate" a scam.',
     aboutDisclaimerText:"Statistics marked with an asterisk are illustrative, used to demonstrate the platform's data-presentation features. Replace them with cited figures from RBI, CERT-In or NCRB reports for a submission-ready report. This platform provides general safety education and is not a substitute for professional legal or financial advice.",
     homeCaseLabel:'CASE FILE / AWARENESS PROGRAM', homeH1:"Most scams don't look like scams. That's the whole trick.",
@@ -1907,6 +1926,8 @@ const I18N = {
     survCaseLabel:'जागरूकता सर्वे', survH1:'हमें बताएं आप पहले क्या जानते थे — और अब क्या जानते हैं', survIntro:'यह छोटा सर्वे इस कम्युनिटी एंगेजमेंट प्रोजेक्ट की रिपोर्टिंग के हिस्से के रूप में, प्लेटफॉर्म इस्तेमाल करने से पहले और बाद की जागरूकता मापता है।',
     survSavedHeading:'जवाब अपने आप सेव होते हैं', survSavedText:'हर जवाब आपकी लिंक की गई Google Sheet में इकट्ठा होता है, आपकी CEP रिपोर्ट के लिए एक्सपोर्ट करने के लिए तैयार।',
     survQuestionsHeading:'सुझाए गए सवाल', survQ1:'• क्या आपको कभी ऐसा मैसेज मिला जिस पर आपको स्कैम होने का शक हुआ?', survQ2:'• फिशिंग मैसेज पहचानने में अपने भरोसे को रेट करें (1–5)', survQ3:'• अगर आपने गलती से अपना OTP शेयर कर दिया तो आप सबसे पहले क्या करेंगे?', survQ4:'• इनमें से कौन सी एक असली बैंक प्रैक्टिस है? (मल्टीपल चॉइस)',
+    survResultsHeading:'लाइव सर्वे नतीजे', survResultsSub:'सिर्फ एकत्रित, अनाम जवाबों की गिनती — अपने आप रिफ्रेश होता है। यह उतना ही ताज़ा है जितना Google ने आखिरी बार publish की हुई शीट अपडेट की — बिल्कुल इंस्टेंट नहीं।',
+    survRefreshBtn:'↻ अभी रिफ्रेश करें', survLoading:'नतीजे लोड हो रहे हैं…',
     fcBackToToolkit:'← टूलकिट पर वापस जाएं', fcPrintSave:'प्रिंट करें / PDF के रूप में सेव करें',
     fcFillIntro:'इसे एक बार भरें, इसे प्रिंट करें, और इसे लैंडलाइन के पास या किसी बड़ी उम्र के रिश्तेदार के पास रखें — सेफ वर्ड एक वॉइस-क्लोन "इमरजेंसी" कॉल के खिलाफ सबसे उपयोगी बचाव है।',
     fcNameLabel:'परिवार के सदस्य का नाम', fcContactLabel:'एक भरोसेमंद इमरजेंसी कॉन्टैक्ट', fcSafeWordLabel:'आपके परिवार का सेफ वर्ड',
@@ -1920,7 +1941,7 @@ const I18N = {
     aboutPriv1:'• मैसेज स्कैनर, URL चेकर, और विशिंग सिम्युलेटर <strong>पूरी तरह आपके ब्राउज़र में ही</strong> चलते हैं। इनमें आप जो भी पेस्ट करते हैं वह ShieldWise को, या किसी भी थर्ड पार्टी को नहीं भेजा जाता — इसमें कोई बैकएंड और कोई बाहरी एनालिसिस API शामिल नहीं है।',
     aboutPriv2:'• कोई लाइव डोमेन-रेप्युटेशन या थ्रेट-इंटेलिजेंस सर्विस इस्तेमाल नहीं की जाती, क्योंकि ऐसा सुरक्षित रूप से करने के लिए API key सुरक्षित रखने वाला एक बैकएंड चाहिए होगा, जो इस प्रोजेक्ट में जानबूझकर नहीं रखा गया है। जहां इससे चेकर्स सीमित होते हैं, टूल नतीजा गढ़ने की बजाय सीधे यह बता देता है।',
     aboutPriv3:'• आपके बैज, क्विज़ हिस्ट्री, चेकलिस्ट जवाब, और फैमिली सेफ्टी कार्ड सिर्फ आपके अपने ब्राउज़र के लोकल स्टोरेज में सेव होते हैं — कहीं अपलोड नहीं होते। ब्राउज़र डेटा क्लियर करने से ये भी क्लियर हो जाते हैं।',
-    aboutPriv4:'• सर्वे के जवाब सीधे Google की अपनी Forms/Sheets इंफ्रास्ट्रक्चर में जाते हैं, ShieldWise के ज़रिए नहीं — यह साइट आपके जवाब का डेटा कहीं भी वापस नहीं पढ़ती या दिखाती।',
+    aboutPriv4:'• सर्वे के जवाब सीधे Google की अपनी Forms/Sheets इंफ्रास्ट्रक्चर में जाते हैं। Survey पेज पर एक <strong>लाइव, एकत्रित चार्ट</strong> दिखता है जो अनाम जवाबों की गिनती दिखाता है (जैसे "6 लोगों ने ऑप्शन A चुना") — एक अलग, non-sensitive समरी शीट से — कोई नाम, ईमेल या फ्री-टेक्स्ट जवाब कभी publish या दिखाया नहीं जाता।',
     aboutPriv5:'• ShieldWise कभी आपका OTP, PIN, पासवर्ड, CVV या पूरी बैंकिंग जानकारी नहीं मांगता और इन्हें कभी नहीं दिया जाना चाहिए, एक स्कैम "दिखाने" के लिए भी नहीं।',
     aboutDisclaimerText:'तारांकन (*) चिह्न वाले आंकड़े उदाहरण के तौर पर हैं, जो प्लेटफॉर्म की डेटा-प्रेजेंटेशन विशेषताओं को दिखाने के लिए इस्तेमाल किए गए हैं। सबमिशन के लिए तैयार रिपोर्ट के लिए इन्हें RBI, CERT-In या NCRB रिपोर्ट्स के उद्धृत आंकड़ों से बदलें। यह प्लेटफॉर्म सामान्य सुरक्षा शिक्षा प्रदान करता है और यह पेशेवर कानूनी या वित्तीय सलाह का विकल्प नहीं है।',
     homeCaseLabel:'केस फाइल / जागरूकता कार्यक्रम', homeH1:'ज़्यादातर स्कैम स्कैम जैसे दिखते ही नहीं। यही तो असली चाल है।',
@@ -1994,6 +2015,10 @@ function applyTranslations(lang){
     const key = el.getAttribute('data-i18n-html');
     if(dict[key] !== undefined) el.innerHTML = dict[key];
   });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if(dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+  });
   const label = document.getElementById('langToggleLabel');
   if(label) label.textContent = lang === 'hi' ? 'EN' : 'हिं';
 }
@@ -2017,6 +2042,7 @@ function setLanguage(lang){
   if(document.getElementById('scenarioNav')) { renderScenarioNav(); renderScenario(); }
   if(document.getElementById('quizQBox') && !document.getElementById('quizPlay').classList.contains('hidden')) renderQuizQ();
   if(gameIndex >= 0 && document.getElementById('gameFinal') && document.getElementById('gameFinal').classList.contains('hidden')) renderGameRound();
+  if(document.getElementById('view-survey') && document.getElementById('view-survey').classList.contains('active')) loadSurveyResults();
   const scanInput = document.getElementById('scanInput');
   if(scanInput && scanInput.value.trim() && document.getElementById('scanResultBox') && document.getElementById('scanResultBox').innerHTML.trim()){
     renderScanResult(scanInput.value);
@@ -2189,6 +2215,8 @@ function showView(name){
   }
   runReveal();
   if(name === 'toolkit') unlockBadge('toolkit');
+  if(name === 'survey') startSurveyAutoRefresh();
+  else clearInterval(surveyRefreshTimer);
 }
 function route(){
   const hash = (location.hash || '#home').replace('#','');
@@ -3501,6 +3529,96 @@ document.getElementById('shareAlertWA').addEventListener('click', () => {
     : `⚠️ Watch out for "${cat.name}" scams. Free awareness info on ShieldWise: ${url}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
 });
+
+/* =================== SURVEY: live results from a published, non-sensitive CSV =================== */
+const SURVEY_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAysiurHZPjJr2JfiT899zqkNfXPK0UGXcLt972XVTruvmoQksHMWEKoLvuqaudmBmYeMewwIzfiNJ/pub?gid=1154444183&single=true&output=csv';
+let surveyRefreshTimer = null;
+
+function parseCSV(text){
+  // Minimal RFC4180-ish CSV parser: handles quoted fields, escaped quotes, commas/newlines inside quotes.
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i], next = text[i+1];
+    if(inQuotes){
+      if(c === '"' && next === '"'){ field += '"'; i++; }
+      else if(c === '"'){ inQuotes = false; }
+      else field += c;
+    } else {
+      if(c === '"') inQuotes = true;
+      else if(c === ','){ row.push(field); field = ''; }
+      else if(c === '\n' || c === '\r'){
+        if(c === '\r' && next === '\n') i++;
+        row.push(field); field = '';
+        if(row.length > 1 || row[0] !== '') rows.push(row);
+        row = [];
+      } else field += c;
+    }
+  }
+  if(field !== '' || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+
+function buildSurveyCounts(rows){
+  if(!rows.length) return [];
+  const headers = rows[0];
+  const dataRows = rows.slice(1).filter(r => r.some(c => c && c.trim()));
+  return headers.map((header, colIdx) => {
+    const values = dataRows.map(r => (r[colIdx] || '').trim()).filter(v => v);
+    const uniq = [...new Set(values)];
+    // Skip columns that look like free text (too many distinct values, or a timestamp) — not meaningful as a bar chart.
+    if(!header || uniq.length === 0 || uniq.length > 8 || /timestamp/i.test(header)) return null;
+    const counts = {};
+    values.forEach(v => { counts[v] = (counts[v]||0) + 1; });
+    const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+    return {header, entries, total: values.length};
+  }).filter(Boolean);
+}
+
+function svgBarChart(q){
+  const max = Math.max(...q.entries.map(e => e[1]), 1);
+  const rows = q.entries.map(([label, count]) => {
+    const pct = Math.round((count/max)*100);
+    const safeLabel = label.length > 42 ? label.slice(0,42) + '…' : label;
+    return `<div class="flex items-center gap-2 text-xs">
+      <span class="w-32 sm:w-44 shrink-0 text-ink-700/70 truncate" title="${label.replace(/"/g,'&quot;')}">${safeLabel}</span>
+      <div class="flex-1 h-5 bg-paper-200 rounded overflow-hidden"><div class="h-full bg-trust" style="width:${pct}%"></div></div>
+      <span class="w-10 shrink-0 text-right font-medium">${count}</span>
+    </div>`;
+  }).join('');
+  return `<div>
+    <h3 class="text-sm font-medium mb-2">${q.header} <span class="text-ink-700/40 font-normal">(${q.total})</span></h3>
+    <div class="space-y-1.5">${rows}</div>
+  </div>`;
+}
+
+async function loadSurveyResults(){
+  const box = document.getElementById('surveyChartsBox');
+  const hi = currentLang === 'hi';
+  if(!box) return;
+  try {
+    const res = await fetch(SURVEY_CSV_URL + '&_=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('fetch failed: ' + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const questions = buildSurveyCounts(rows);
+    if(!questions.length){
+      box.innerHTML = `<p class="text-sm text-ink-700/60">${hi?'अभी तक कोई जवाब दर्ज नहीं हुआ।':'No responses recorded yet.'}</p>`;
+    } else {
+      box.innerHTML = questions.map(svgBarChart).join('<hr class="border-line my-4">');
+    }
+    document.getElementById('surveyLastUpdated').textContent = (hi?'आखिरी बार अपडेट: ':'Last updated: ') + new Date().toLocaleTimeString(hi?'hi-IN':'en-IN');
+  } catch(e){
+    box.innerHTML = `<p class="text-sm text-signal">${hi?'नतीजे लोड नहीं हो सके। शीट का "Publish to web" लिंक और शेयरिंग सेटिंग चेक करें।':'Could not load results. Check the sheet\'s "Publish to web" link and sharing settings.'}</p>`;
+  }
+}
+function startSurveyAutoRefresh(){
+  loadSurveyResults();
+  clearInterval(surveyRefreshTimer);
+  surveyRefreshTimer = setInterval(loadSurveyResults, 60000); // Google's published CSV itself lags behind live edits — 60s is a reasonable, low-cost poll.
+}
+const surveyRefreshBtn = document.getElementById('surveyRefresh');
+if(surveyRefreshBtn) surveyRefreshBtn.addEventListener('click', loadSurveyResults);
 
 /* ---- Family Cyber-Safety Card ---- */
 function renderFamilyCard(){
