@@ -1,7 +1,7 @@
 /* ShieldWise service worker — caches the app shell so it works offline
-   after the first visit. Single-file site, so caching index.html caches
-   almost everything (the detector, quiz, brochures, etc. are all inline). */
-const CACHE_NAME = 'shieldwise-v1';
+   after the first visit. Caching index.html caches the app shell;
+   brochure PDFs are fetched on demand. */
+const CACHE_NAME = 'shieldwise-v2';
 const PRECACHE_URLS = [
   './',
   './index.html',
